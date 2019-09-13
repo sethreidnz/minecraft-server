@@ -18,8 +18,8 @@ stages:
 
     ## Run the dotnet build/publish
     - script: |
-        dotnet build $(projectFile) --configuration $(buildConfiguration)
-        dotnet publish $(projectFile) --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)
+        dotnet build --configuration $(buildConfiguration)
+        dotnet publish --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)
       workingDirectory: $(Build.SourcesDirectory)/src/$(WebApp_ProjectName)
 
     ## Archive the files into a zip file for publishing
