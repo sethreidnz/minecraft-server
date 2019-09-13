@@ -7,6 +7,8 @@ pr: none
 
 variables:
   WebApp_ProjectName: MinecraftServer.Web
+  WebApp_ProjectDirectory: $(Build.SourcesDirectory)/src/$(WebApp_ProjectName)
+  WebApp_ProjectFile: $(WebApp_ProjectDirectory)/$(WebApp_ProjectName).csproj
 
 stages:
 - stage: build
@@ -18,9 +20,8 @@ stages:
 
     ## Run the dotnet build/publish
     - script: |
-        dotnet build $(projectFile) --configuration $(buildConfiguration)
-        dotnet publish $(projectFile) --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)
-      workingDirectory: $(Build.SourcesDirectory)/src/$(WebApp_ProjectName)
+        dotnet build $(WebApp_ProjectFile) --configuration $(buildConfiguration)
+        dotnet publish $(WebApp_ProjectFile) --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)
 
     ## Archive the files into a zip file for publishing
     - task: ArchiveFiles@2
