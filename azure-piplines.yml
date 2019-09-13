@@ -20,7 +20,8 @@ stages:
     - script: |
         dotnet build $(projectFile) --configuration $(buildConfiguration)
         dotnet publish $(projectFile) --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)
-    
+      workingDirectory: $(Build.SourcesDirectory)/src/$(WebApp_ProjectName)
+
     ## Archive the files into a zip file for publishing
     - task: ArchiveFiles@2
       inputs:
