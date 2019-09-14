@@ -21,7 +21,7 @@
     "VirtualNetwork_Name": "[concat(parameters('VirtualMachine_Name'), '-vnet')]",
     "NetworkSecurityGroup_name": "[concat(parameters('VirtualMachine_Name'), '-nsg')]",
     "Disk_Name": "[concat(parameters('VirtualMachine_Name'), '-disk')]",
-    "AppServicePlan_Id": "[resourceId(parameters('AppServicePlan_ResourceGroupName'), 'Microsoft.Web/serverfarms', parameters('AppServicePlan_Name'))]"
+    "AppServicePlan_Id": "/subscriptions/2fb0e5d3-72a4-49c4-80a8-892de5ea8bd7/resourceGroups/free-app-service/providers/Microsoft.Web/serverFarms/free-app-service"
   },
   "resources": [
     {
