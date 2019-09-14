@@ -21,7 +21,7 @@
     "VirtualNetwork_Name": "[concat(parameters('VirtualMachine_Name'), '-vnet')]",
     "NetworkSecurityGroup_name": "[concat(parameters('VirtualMachine_Name'), '-nsg')]",
     "Disk_Name": "[concat(parameters('VirtualMachine_Name'), '-disk')]",
-    "AppServicePlan_Id": "[concat('subscriptions/', subscription().id ,'/resourceGroups/', parameters('AppServicePlan_ResourceGroupName') ,'/providers/Microsoft.Web/serverfarms/', parameters('AppServicePlan_Name'))]"
+    "AppServicePlan_Id": "[resourceId(subscription().id, parameters('AppServicePlan_ResourceGroupName'), 'Microsoft.Web/serverfarms', parameters('AppServicePlan_Name'))]"
   },
   "resources": [
     {
@@ -448,8 +448,7 @@
             "createOption": "FromImage",
             "caching": "ReadWrite",
             "managedDisk": {
-              "storageAccountType": "Premium_LRS",
-              "id": "[resourceId('Microsoft.Compute/disks', concat(parameters('VirtualMachine_Name'), '_disk1_e6a9eebe30cd43f9a1d5f8b3656cdb62'))]"
+              "storageAccountType": "Premium_LRS"
             },
             "diskSizeGB": 30
           },
