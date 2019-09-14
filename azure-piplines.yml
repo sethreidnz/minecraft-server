@@ -9,7 +9,6 @@ variables:
   AppServicePlan_Name: free-app-service
   AppServicePlan_ResourceGroup: free-app-service
   AppServicePlan_SubscriptionId: 2fb0e5d3-72a4-49c4-80a8-892de5ea8bd7
-  ARM_TemplatePath: $(Build.SourcesDirectory)/azure-deploy.json
   ResourceGroup_Location: 'Australia East'
   ResourceGroup_Name: minecraft-tekkit
   WebApp_BuildConfiguration: Release
@@ -23,7 +22,7 @@ variables:
 stages:
   # Download and build the project
   - stage: Build
-    displayName: "Build"
+    displayName: Build
     jobs:
       - job: run_build
         pool:
@@ -38,7 +37,7 @@ stages:
           - task: CopyFiles@2
             displayName: Copy ARM template
             inputs:
-              contents: $(ARM_TemplatePath)
+              contents: $(Build.ArtifactStagingDirectory)/azure-deploy.json
               targetFolder: $(Build.ArtifactStagingDirectory)
 
           ## Archive the files into a zip file for publishing
@@ -78,7 +77,7 @@ stages:
                 azureSubscription: 'Microsoft Azure Sponsorship (15253eaa-8a37-4163-8903-aa688499a16f)'
                 resourceGroupName: $(ResourceGroup_Name)
                 location: $(ResourceGroup_Location)
-                csmFile: $(ARM_TemplatePath)
+                csmFile: $(Pipeline.Workspace)/drop/azure-deploy.json
                 deploymentMode: 'Incremental'
                 overrideParameters: >-
                   -AppServicePlan_Name "$(AppServicePlan_Name)"
