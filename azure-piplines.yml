@@ -10,9 +10,11 @@ variables:
   AppServicePlan_ResourceGroup: free-app-service
   AppServicePlan_SubscriptionId: 2fb0e5d3-72a4-49c4-80a8-892de5ea8bd7
   ARM_TemplatePath: $(Build.SourcesDirectory)/azure-deploy.json
+  BuildArtifactName: drop
   ResourceGroup_Location: 'Australia East'
   ResourceGroup_Name: minecraft-tekkit
   WebApp_BuildConfiguration: Release
+  WebApp_OutputFolder: $(Build.ArtifactStagingDirectory)/WebApp
   WebApp_ProjectDirectory: $(Build.SourcesDirectory)/src/$(WebApp_ProjectName)
   WebApp_ProjectFile: $(WebApp_ProjectDirectory)/$(WebApp_ProjectName).csproj
   WebApp_ProjectName: MinecraftServer.Web
@@ -31,7 +33,7 @@ stages:
 
           ## Run the dotnet build/publish
           - script: |
-              dotnet publish $(WebApp_ProjectFile) --configuration $(WebApp_BuildConfiguration) --output $(Build.ArtifactStagingDirectory)
+              dotnet publish $(WebApp_ProjectFile) --configuration $(WebApp_BuildConfiguration) --output $(WebApp_OutputFolder)
             displayName: Public dotnet web app
 
           - task: CopyFiles@2
@@ -44,7 +46,7 @@ stages:
           - task: ArchiveFiles@2
             displayName: Zip build artifacts
             inputs:
-              rootFolderOrFile: $(Build.ArtifactStagingDirectory)
+              rootFolderOrFile: $(WebApp_OutputFolder)
               archiveType: "zip"
               archiveFile: "$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip"
               includeRootFolder: false
@@ -53,15 +55,15 @@ stages:
           - task: PublishBuildArtifacts@1
             displayName: Publish build artifacts
             inputs:
-              pathtoPublish: "$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip"
-              artifactName: "WebApp"
+              pathtoPublish: "$(Build.ArtifactStagingDirectory)"
+              artifactName: $(BuildArtifactName)
 
   # Deploy the resources and application
   - stage: Deploy
     displayName: "Deploy"
     jobs:
-    - deployment: DeployWebApp
-      displayName: Deploy Web App
+    - deployment: Production
+      displayName: Production
       pool:
         vmImage: 'windows-latest'
       environment: 'production'
@@ -70,7 +72,7 @@ stages:
           deploy:
             steps:
             - download: current
-              artifact: WebApp
+              artifact: $(BuildArtifactName)
             - task: AzureResourceGroupDeployment@2
               displayName: 'ARM deployment'
               inputs:
