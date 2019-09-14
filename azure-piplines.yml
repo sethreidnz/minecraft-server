@@ -31,7 +31,6 @@ stages:
 
           ## Run the dotnet build/publish
           - script: |
-              dotnet build $(WebApp_ProjectFile) --configuration $(WebApp_BuildConfiguration)
               dotnet publish $(WebApp_ProjectFile) --configuration $(WebApp_BuildConfiguration) --output $(Build.ArtifactStagingDirectory)
 
           - task: CopyFiles@2
