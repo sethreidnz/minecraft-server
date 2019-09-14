@@ -9,7 +9,7 @@ variables:
   -group: MinecraftServer
   AppServicePlan_Name: minecraft-tekkit
   Authentication_UserName: minecraft-admin
-  AzureSubscription: 15253eaa-8a37-4163-8903-aa688499a16f
+  AzureSubscription: Microsoft Azure Sponsorship (15253eaa-8a37-4163-8903-aa688499a16f)
   ResourceGroup_Location: 'Australia East'
   ResourceGroup_Name: minecraft-tekkit
   WebApp_BuildConfiguration: Release
