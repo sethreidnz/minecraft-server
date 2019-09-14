@@ -24,7 +24,7 @@
       "type": "Microsoft.Web/sites",
       "apiVersion": "2016-08-01",
       "name": "[parameters('WebApp_SiteName')]",
-      "location": "Australia East",
+      "location": "[resourceGroup().location]",
       "kind": "app",
       "properties": {
         "enabled": true,
@@ -55,7 +55,7 @@
       "type": "Microsoft.Web/sites/config",
       "apiVersion": "2016-08-01",
       "name": "[concat(parameters('WebApp_SiteName'), '/web')]",
-      "location": "Australia East",
+      "location": "[resourceGroup().location]",
       "dependsOn": [
         "[resourceId('Microsoft.Web/sites', parameters('WebApp_SiteName'))]"
       ],
@@ -146,7 +146,7 @@
       "type": "Microsoft.Web/sites/hostNameBindings",
       "apiVersion": "2016-08-01",
       "name": "[concat(parameters('WebApp_SiteName'), '/', parameters('WebApp_SiteName'), '.azurewebsites.net')]",
-      "location": "Australia East",
+      "location": "[resourceGroup().location]",
       "dependsOn": [
         "[resourceId('Microsoft.Web/sites', parameters('WebApp_SiteName'))]"
       ],
@@ -159,7 +159,7 @@
       "type": "Microsoft.Compute/disks",
       "apiVersion": "2018-06-01",
       "name": "[variables('Disk_Name')]",
-      "location": "australiaeast",
+      "location": "[resourceGroup().location]",
       "tags": {
         "minecraftuser": "seth",
         "difficulty": "2",
@@ -192,7 +192,7 @@
       "type": "Microsoft.Insights/components",
       "apiVersion": "2015-05-01",
       "name": "[parameters('VirtualMachine_Name')]",
-      "location": "australiaeast",
+      "location": "[resourceGroup().location]",
       "kind": "web",
       "properties": {
         "Application_Type": "web",
@@ -203,7 +203,7 @@
       "type": "Microsoft.Network/networkSecurityGroups",
       "apiVersion": "2019-06-01",
       "name": "[variables('NetworkSecurityGroup_name')]",
-      "location": "australiaeast",
+      "location": "[resourceGroup().location]",
       "properties": {
         "provisioningState": "Succeeded",
         "resourceGuid": "429abea5-f1ba-46ea-a6d0-0ba756964cfb",
@@ -375,7 +375,7 @@
       "type": "Microsoft.Network/publicIPAddresses",
       "apiVersion": "2019-06-01",
       "name": "[variables('PublicIpAddress')]",
-      "location": "australiaeast",
+      "location": "[resourceGroup().location]",
       "sku": {
         "name": "Basic",
         "tier": "Regional"
@@ -394,7 +394,7 @@
       "type": "Microsoft.Network/virtualNetworks",
       "apiVersion": "2019-06-01",
       "name": "[variables('VirtualNetwork_Name')]",
-      "location": "australiaeast",
+      "location": "[resourceGroup().location]",
       "properties": {
         "provisioningState": "Succeeded",
         "resourceGuid": "79e3c896-2538-4482-96a6-a543d704a4cf",
@@ -423,7 +423,7 @@
       "type": "Microsoft.Compute/virtualMachines",
       "apiVersion": "2019-03-01",
       "name": "[parameters('VirtualMachine_Name')]",
-      "location": "australiaeast",
+      "location": "[resourceGroup().location]",
       "dependsOn": [
         "[resourceId('Microsoft.Network/networkInterfaces', variables('NetworkInterface_Name'))]"
       ],
@@ -543,7 +543,7 @@
       "type": "Microsoft.Network/networkInterfaces",
       "apiVersion": "2019-06-01",
       "name": "[variables('NetworkInterface_Name')]",
-      "location": "australiaeast",
+      "location": "[resourceGroup().location]",
       "dependsOn": [
         "[resourceId('Microsoft.Network/publicIPAddresses', variables('PublicIpAddress'))]",
         "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('VirtualNetwork_Name'), 'default')]",
