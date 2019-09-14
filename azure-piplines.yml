@@ -10,7 +10,6 @@ variables:
   AppServicePlan_ResourceGroup: free-app-service
   AppServicePlan_SubscriptionId: 2fb0e5d3-72a4-49c4-80a8-892de5ea8bd7
   ARM_TemplatePath: $(Build.SourcesDirectory)/azure-deploy.json
-  BuildArtifactName: drop
   ResourceGroup_Location: 'Australia East'
   ResourceGroup_Name: minecraft-tekkit
   WebApp_BuildConfiguration: Release
@@ -56,7 +55,7 @@ stages:
             displayName: Publish build artifacts
             inputs:
               pathtoPublish: "$(Build.ArtifactStagingDirectory)"
-              artifactName: $(BuildArtifactName)
+              artifactName: drop
 
   # Deploy the resources and application
   - stage: Deploy
@@ -72,7 +71,7 @@ stages:
           deploy:
             steps:
             - download: current
-              artifact: $(BuildArtifactName)
+              artifact: drop
             - task: AzureResourceGroupDeployment@2
               displayName: 'ARM deployment'
               inputs:
