@@ -25,11 +25,35 @@
   },
   "resources": [
     {
+      "type": "Microsoft.Web/serverfarms",
+      "apiVersion": "2016-09-01",
+      "name": "[parameters('AppServicePlan_Name')]",
+      "location": "[resourceGroup().location]",
+      "sku": {
+        "name": "D1",
+        "tier": "Shared",
+        "size": "D1",
+        "family": "D",
+        "capacity": 0
+      },
+      "kind": "app",
+      "properties": {
+        "name": "[parameters('AppServicePlan_Name')]",
+        "perSiteScaling": false,
+        "reserved": false,
+        "targetWorkerCount": 0,
+        "targetWorkerSizeId": 0
+      }
+    },
+    {
       "type": "Microsoft.Web/sites",
       "apiVersion": "2016-08-01",
       "name": "[parameters('WebApp_SiteName')]",
       "location": "[resourceGroup().location]",
       "kind": "app",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', parameters('AppServicePlan_Name'))]"
+      ],
       "properties": {
         "enabled": true,
         "hostNameSslStates": [
@@ -44,7 +68,7 @@
             "hostType": "Repository"
           }
         ],
-        "serverFarmId": "/subscriptions/2fb0e5d3-72a4-49c4-80a8-892de5ea8bd7/resourceGroups/free-app-service/providers/Microsoft.Web/serverfarms/free-app-service",
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('AppServicePlan_Name'))]",
         "reserved": false,
         "scmSiteAlsoStopped": false,
         "clientAffinityEnabled": true,
