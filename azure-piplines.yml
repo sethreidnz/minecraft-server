@@ -7,6 +7,8 @@ pr: none
 
 variables:
   AppServicePlan_Name: free-app-service
+  AppServicePlan_ResourceGroup: free-app-service
+  AppServicePlan_SubscriptionId: 2fb0e5d3-72a4-49c4-80a8-892de5ea8bd7
   ResourceGroup_Location: 'Australia East'
   ResourceGroup_Name: minecraft-tekkit
   WebApp_BuildConfiguration: Release
@@ -79,6 +81,8 @@ stages:
                 deploymentMode: 'Incremental'
                 overrideParameters: >-
                   -AppServicePlan_Name "$(AppServicePlan_Name)"
+                  -AppServicePlan_SubscriptionId "$(AppServicePlan_SubscriptionId)"
+                  -AppServicePlan_ResourceGroupName "$(AppServicePlan_ResourceGroupName)"
                   -VirtualMachine_Name  "$(VirtualMachine_Name)"
                   -WebApp_SiteName "$(WebApp_SiteName)"
 
