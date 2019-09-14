@@ -35,7 +35,7 @@ stages:
 
           - task: CopyFiles@2
             inputs:
-              contents: '**/azure-deploy.json'
+              contents: $(ARM_TemplatePath)
               targetFolder: $(Build.ArtifactStagingDirectory)
 
           ## Archive the files into a zip file for publishing
