@@ -44,7 +44,7 @@
             "hostType": "Repository"
           }
         ],
-        "serverFarmId": "/subscriptions/2fb0e5d3-72a4-49c4-80a8-892de5ea8bd7/resourceGroups/free-app-service/providers/Microsoft.Web/serverFarms/free-app-service",
+        "serverFarmId": "/subscriptions/2fb0e5d3-72a4-49c4-80a8-892de5ea8bd7/resourceGroups/free-app-service/providers/Microsoft.Web/serverfarms/free-app-service",
         "reserved": false,
         "scmSiteAlsoStopped": false,
         "clientAffinityEnabled": true,
