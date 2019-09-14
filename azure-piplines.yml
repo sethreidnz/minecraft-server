@@ -6,8 +6,9 @@ trigger:
 pr: none
 
 variables:
-  AppServicePlan_Name: free-app-service
-  AppServicePlan_ResourceGroupName: free-app-service
+  -group: MinecraftServer
+  AppServicePlan_Name: minecraft-tekkit
+  Authentication_UserName: minecraft-admin
   ResourceGroup_Location: 'Australia East'
   ResourceGroup_Name: minecraft-tekkit
   WebApp_BuildConfiguration: Release
@@ -73,14 +74,15 @@ stages:
             - task: AzureResourceGroupDeployment@2
               displayName: 'ARM deployment'
               inputs:
-                azureSubscription: 'Microsoft Azure Sponsorship (15253eaa-8a37-4163-8903-aa688499a16f)'
+                azureSubscription: '2fb0e5d3-72a4-49c4-80a8-892de5ea8bd7'
                 resourceGroupName: $(ResourceGroup_Name)
                 location: $(ResourceGroup_Location)
                 csmFile: $(Pipeline.Workspace)/drop/azure-deploy.json
                 deploymentMode: 'Incremental'
                 overrideParameters: >-
                   -AppServicePlan_Name "$(AppServicePlan_Name)"
-                  -AppServicePlan_ResourceGroupName "$(AppServicePlan_ResourceGroupName)"
+                  -Authentication_UserName "$(Authentication_UserName)"
+                  -Authentication_PasswordOrKey "$(Authentication_PasswordOrKey)"
                   -VirtualMachine_Name  "$(VirtualMachine_Name)"
                   -WebApp_SiteName "$(WebApp_SiteName)"
 

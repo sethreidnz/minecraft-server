@@ -2,615 +2,258 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "WebApp_SiteName": {
-      "type": "string"
-    },
     "AppServicePlan_Name": {
       "type": "string"
     },
-    "AppServicePlan_ResourceGroupName": {
-      "type": "string"
+    "AppServicePlan_Sku": {
+      "type": "string",
+      "defaultValue" : "S1",
+      "metadata": {
+        "description": "The SKU of App Service Plan, by default is Standard S1"
+      }
+    },
+    "Authentication_UserName": {
+      "type": "string",
+      "metadata": {
+        "description": "Admin user name you will use to log on to the Virtual Machine."
+      }
+    },
+    "Authentication_PasswordOrKey": {
+      "type": "securestring",
+      "metadata": {
+        "description": "SSH Key or password for the Virtual Machine. SSH key is recommended."
+      }
+    },
+    "Authentication_Type": {
+      "type": "string",
+      "defaultValue": "sshPublicKey",
+      "allowedValues": [
+        "sshPublicKey",
+        "password"
+      ],
+      "metadata": {
+        "description": "Type of authentication to use on the Virtual Machine. SSH key is recommended."
+      }
     },
     "VirtualMachine_Name": {
+      "type": "string"
+    },
+    "VirtualMachine_Size": {
+      "type": "string",
+      "defaultValue": "Standard_A1",
+      "allowedValues": [
+        "Standard_A1",
+        "Standard_A2",
+        "Standard_D1_v2",
+        "Standard_D2_v2",
+        "Standard_D3_v2",
+        "Standard_D4_v2",
+        "Basic_A1",
+        "Basic_A2"
+      ],
+      "metadata": {
+        "description": "This is the Azure Virtual Machine size, and will affect the cost. If you don't know, just leave the default value."
+      }
+    },
+    "WebApp_SiteName": {
       "type": "string"
     }
   },
   "variables": {
-    "NetworkInterface_Name": "[parameters('VirtualMachine_Name')]",
-    "PublicIpAddress": "[concat(parameters('VirtualMachine_Name'), '-ip')]",
+    "AddressPrefix": "10.0.0.0/16",
+    "NetworkInterface_Name":  "[concat(parameters('VirtualMachine_Name'), '-ni')]",
+    "NetworkSecurityGroup_Name":  "[concat(parameters('VirtualMachine_Name'), '-nsg')]",
+    "PublicIpAddress_Name": "[concat(parameters('VirtualMachine_Name'), '-ip')]",
+    "PublicIpAddress_Type": "Dynamic",
+    "PublicIpAddress_DNSName": "[concat(parameters('VirtualMachine_Name'), '-dns')]",
+    "Subnet_Name": "[concat(parameters('VirtualMachine_Name'), '-subnet')]",
+    "Subnet_Prefix": "10.0.0.0/24",
+    "Subnet_Ref": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('VirtualNetwork_Name'), variables('Subnet_Name'))]",
     "VirtualNetwork_Name": "[concat(parameters('VirtualMachine_Name'), '-vnet')]",
     "NetworkSecurityGroup_name": "[concat(parameters('VirtualMachine_Name'), '-nsg')]",
-    "Disk_Name": "[concat(parameters('VirtualMachine_Name'), '-disk')]",
-    "AppServicePlan_Id": "[concat('/subscriptions/', subscription().id, '/resourcegroups/', parameters('AppServicePlan_ResourceGroupName'), '/providers/Microsoft.Web/serverfarms/', parameters('AppServicePlan_Name'))]"
+    "Disk_Name": "[concat(parameters('VirtualMachine_Name'), '-disk')]",   
+    "VirtualMachine_ImagePublisher": "Canonical",
+    "VirtualMachine_ImageOffer": "UbuntuServer",
+    "VirtualMachine_LinuxConfiguration": {
+      "disablePasswordAuthentication": true,
+      "ssh": {
+        "publicKeys": [
+          {
+            "path": "[concat('/home/', parameters('Authentication_UserName'), '/.ssh/authorized_keys')]",
+            "keyData": "[parameters('Authentication_PasswordOrKey')]"
+          }
+        ]
+      }
+    },
+    "VirtualMachine_UbuntuOSVersion": "18.04-LTS"
   },
   "resources": [
     {
+      "apiVersion": "2018-02-01",
       "type": "Microsoft.Web/serverfarms",
-      "apiVersion": "2016-09-01",
+      "kind": "app",
       "name": "[parameters('AppServicePlan_Name')]",
       "location": "[resourceGroup().location]",
+      "properties": {},
+      "dependsOn": [],
       "sku": {
-        "name": "D1",
-        "tier": "Shared",
-        "size": "D1",
-        "family": "D",
-        "capacity": 0
-      },
-      "kind": "app",
-      "properties": {
-        "name": "[parameters('AppServicePlan_Name')]",
-        "perSiteScaling": false,
-        "reserved": false,
-        "targetWorkerCount": 0,
-        "targetWorkerSizeId": 0
+        "name": "[parameters('AppServicePlan_Sku')]"
       }
     },
     {
+      "apiVersion": "2018-11-01",
       "type": "Microsoft.Web/sites",
-      "apiVersion": "2016-08-01",
+      "kind": "app",
       "name": "[parameters('WebApp_SiteName')]",
       "location": "[resourceGroup().location]",
-      "kind": "app",
+      "properties": {
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('AppServicePlan_Name'))]"
+      },
       "dependsOn": [
         "[resourceId('Microsoft.Web/serverfarms', parameters('AppServicePlan_Name'))]"
-      ],
-      "properties": {
-        "enabled": true,
-        "hostNameSslStates": [
-          {
-            "name": "[concat(parameters('WebApp_SiteName'), '.azurewebsites.net')]",
-            "sslState": "Disabled",
-            "hostType": "Standard"
-          },
-          {
-            "name": "[concat(parameters('WebApp_SiteName'), '.scm.azurewebsites.net')]",
-            "sslState": "Disabled",
-            "hostType": "Repository"
-          }
-        ],
-        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('AppServicePlan_Name'))]",
-        "reserved": false,
-        "scmSiteAlsoStopped": false,
-        "clientAffinityEnabled": true,
-        "clientCertEnabled": false,
-        "hostNamesDisabled": false,
-        "containerSize": 0,
-        "dailyMemoryTimeQuota": 0,
-        "httpsOnly": false
-      }
+      ]
     },
     {
-      "type": "Microsoft.Web/sites/config",
-      "apiVersion": "2016-08-01",
-      "name": "[concat(parameters('WebApp_SiteName'), '/web')]",
-      "location": "[resourceGroup().location]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Web/sites', parameters('WebApp_SiteName'))]"
-      ],
-      "properties": {
-        "numberOfWorkers": 1,
-        "defaultDocuments": [
-          "Default.htm",
-          "Default.html",
-          "Default.asp",
-          "index.htm",
-          "index.html",
-          "iisstart.htm",
-          "default.aspx",
-          "index.php",
-          "hostingstart.html"
-        ],
-        "netFrameworkVersion": "v4.0",
-        "phpVersion": "5.6",
-        "pythonVersion": "",
-        "nodeVersion": "",
-        "linuxFxVersion": "",
-        "requestTracingEnabled": false,
-        "remoteDebuggingEnabled": false,
-        "httpLoggingEnabled": false,
-        "logsDirectorySizeLimit": 35,
-        "detailedErrorLoggingEnabled": false,
-        "publishingUsername": "$minecraft-server",
-        "scmType": "None",
-        "use32BitWorkerProcess": true,
-        "webSocketsEnabled": false,
-        "alwaysOn": false,
-        "appCommandLine": "",
-        "managedPipelineMode": "Integrated",
-        "virtualApplications": [
-          {
-            "virtualPath": "/",
-            "physicalPath": "site\\wwwroot",
-            "preloadEnabled": false,
-            "virtualDirectories": null
-          }
-        ],
-        "winAuthAdminState": 0,
-        "winAuthTenantState": 0,
-        "customAppPoolIdentityAdminState": false,
-        "customAppPoolIdentityTenantState": false,
-        "loadBalancing": "LeastRequests",
-        "routingRules": [],
-        "experiments": {
-          "rampUpRules": []
-        },
-        "autoHealEnabled": false,
-        "vnetName": "",
-        "siteAuthEnabled": false,
-        "siteAuthSettings": {
-          "enabled": "null",
-          "unauthenticatedClientAction": null,
-          "tokenStoreEnabled": null,
-          "allowedExternalRedirectUrls": null,
-          "defaultProvider": null,
-          "clientId": null,
-          "clientSecret": null,
-          "clientSecretCertificateThumbprint": null,
-          "issuer": null,
-          "allowedAudiences": null,
-          "additionalLoginParams": null,
-          "isAadAutoProvisioned": false,
-          "googleClientId": null,
-          "googleClientSecret": null,
-          "googleOAuthScopes": null,
-          "facebookAppId": null,
-          "facebookAppSecret": null,
-          "facebookOAuthScopes": null,
-          "twitterConsumerKey": null,
-          "twitterConsumerSecret": null,
-          "microsoftAccountClientId": null,
-          "microsoftAccountClientSecret": null,
-          "microsoftAccountOAuthScopes": null
-        },
-        "localMySqlEnabled": false,
-        "http20Enabled": false,
-        "minTlsVersion": "1.2",
-        "ftpsState": "AllAllowed",
-        "reservedInstanceCount": 0,
-        "fileChangeAuditEnabled": false
-      }
-    },
-    {
-      "type": "Microsoft.Web/sites/hostNameBindings",
-      "apiVersion": "2016-08-01",
-      "name": "[concat(parameters('WebApp_SiteName'), '/', parameters('WebApp_SiteName'), '.azurewebsites.net')]",
-      "location": "[resourceGroup().location]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Web/sites', parameters('WebApp_SiteName'))]"
-      ],
-      "properties": {
-        "siteName": "minecraft-server",
-        "hostNameType": "Verified"
-      }
-    },
-    {
-      "type": "Microsoft.Compute/disks",
-      "apiVersion": "2018-06-01",
-      "name": "[variables('Disk_Name')]",
-      "location": "[resourceGroup().location]",
-      "tags": {
-        "minecraftuser": "seth",
-        "difficulty": "2",
-        "levelname": "world",
-        "gamemode": "2",
-        "whitelist": "false",
-        "enablecommandblock": "false",
-        "spawnmonsters": "true",
-        "generatestructures": "true",
-        "levelseed": " "
-      },
-      "sku": {
-        "name": "Premium_LRS",
-        "tier": "Premium"
-      },
-      "properties": {
-        "osType": "Linux",
-        "creationData": {
-          "createOption": "FromImage",
-          "imageReference": {
-            "id": "/Subscriptions/2fb0e5d3-72a4-49c4-80a8-892de5ea8bd7/Providers/Microsoft.Compute/Locations/australiaeast/Publishers/Canonical/ArtifactTypes/VMImage/Offers/UbuntuServer/Skus/18.04-LTS/Versions/18.04.201909030"
-          }
-        },
-        "diskSizeGB": 100,
-        "diskIOPSReadWrite": 500,
-        "diskMBpsReadWrite": 100
-      }
-    },
-    {
-      "type": "Microsoft.Insights/components",
-      "apiVersion": "2015-05-01",
-      "name": "[parameters('VirtualMachine_Name')]",
-      "location": "[resourceGroup().location]",
-      "kind": "web",
-      "properties": {
-        "Application_Type": "web",
-        "Request_Source": "IbizaWebAppExtensionCreate"
-      }
-    },
-    {
+      "apiVersion": "2017-04-01",
       "type": "Microsoft.Network/networkSecurityGroups",
-      "apiVersion": "2019-06-01",
-      "name": "[variables('NetworkSecurityGroup_name')]",
+      "name": "[variables('NetworkInterface_Name')]",
       "location": "[resourceGroup().location]",
       "properties": {
-        "provisioningState": "Succeeded",
-        "resourceGuid": "429abea5-f1ba-46ea-a6d0-0ba756964cfb",
         "securityRules": [
           {
-            "name": "SSH",
-            "etag": "W/\"cc560460-80a1-48de-ada6-72fae7149ba6\"",
+            "name": "ssh",
             "properties": {
-              "provisioningState": "Succeeded",
-              "protocol": "TCP",
+              "description": "SSH port",
+              "protocol": "Tcp",
               "sourcePortRange": "*",
               "destinationPortRange": "22",
-              "sourceAddressPrefix": "*",
-              "destinationAddressPrefix": "*",
-              "access": "Allow",
-              "priority": 300,
-              "direction": "Inbound",
-              "sourcePortRanges": [],
-              "destinationPortRanges": [],
-              "sourceAddressPrefixes": [],
-              "destinationAddressPrefixes": []
-            }
-          },
-          {
-            "name": "any-tcp",
-            "etag": "W/\"cc560460-80a1-48de-ada6-72fae7149ba6\"",
-            "properties": {
-              "provisioningState": "Succeeded",
-              "protocol": "TCP",
-              "sourcePortRange": "*",
-              "destinationPortRange": "*",
-              "sourceAddressPrefix": "*",
+              "sourceAddressPrefix": "Internet",
               "destinationAddressPrefix": "*",
               "access": "Allow",
               "priority": 100,
-              "direction": "Inbound",
-              "sourcePortRanges": [],
-              "destinationPortRanges": [],
-              "sourceAddressPrefixes": [],
-              "destinationAddressPrefixes": []
-            }
-          }
-        ],
-        "defaultSecurityRules": [
-          {
-            "name": "AllowVnetInBound",
-            "etag": "W/\"cc560460-80a1-48de-ada6-72fae7149ba6\"",
-            "properties": {
-              "provisioningState": "Succeeded",
-              "description": "Allow inbound traffic from all VMs in VNET",
-              "protocol": "*",
-              "sourcePortRange": "*",
-              "destinationPortRange": "*",
-              "sourceAddressPrefix": "VirtualNetwork",
-              "destinationAddressPrefix": "VirtualNetwork",
-              "access": "Allow",
-              "priority": 65000,
-              "direction": "Inbound",
-              "sourcePortRanges": [],
-              "destinationPortRanges": [],
-              "sourceAddressPrefixes": [],
-              "destinationAddressPrefixes": []
+              "direction": "Inbound"
             }
           },
           {
-            "name": "AllowAzureLoadBalancerInBound",
-            "etag": "W/\"cc560460-80a1-48de-ada6-72fae7149ba6\"",
+            "name": "minecraft",
             "properties": {
-              "provisioningState": "Succeeded",
-              "description": "Allow inbound traffic from azure load balancer",
-              "protocol": "*",
+              "description": "Minecraft server port",
+              "protocol": "Tcp",
               "sourcePortRange": "*",
-              "destinationPortRange": "*",
-              "sourceAddressPrefix": "AzureLoadBalancer",
+              "destinationPortRange": "25565",
+              "sourceAddressPrefix": "Internet",
               "destinationAddressPrefix": "*",
               "access": "Allow",
-              "priority": 65001,
-              "direction": "Inbound",
-              "sourcePortRanges": [],
-              "destinationPortRanges": [],
-              "sourceAddressPrefixes": [],
-              "destinationAddressPrefixes": []
-            }
-          },
-          {
-            "name": "DenyAllInBound",
-            "etag": "W/\"cc560460-80a1-48de-ada6-72fae7149ba6\"",
-            "properties": {
-              "provisioningState": "Succeeded",
-              "description": "Deny all inbound traffic",
-              "protocol": "*",
-              "sourcePortRange": "*",
-              "destinationPortRange": "*",
-              "sourceAddressPrefix": "*",
-              "destinationAddressPrefix": "*",
-              "access": "Deny",
-              "priority": 65500,
-              "direction": "Inbound",
-              "sourcePortRanges": [],
-              "destinationPortRanges": [],
-              "sourceAddressPrefixes": [],
-              "destinationAddressPrefixes": []
-            }
-          },
-          {
-            "name": "AllowVnetOutBound",
-            "etag": "W/\"cc560460-80a1-48de-ada6-72fae7149ba6\"",
-            "properties": {
-              "provisioningState": "Succeeded",
-              "description": "Allow outbound traffic from all VMs to all VMs in VNET",
-              "protocol": "*",
-              "sourcePortRange": "*",
-              "destinationPortRange": "*",
-              "sourceAddressPrefix": "VirtualNetwork",
-              "destinationAddressPrefix": "VirtualNetwork",
-              "access": "Allow",
-              "priority": 65000,
-              "direction": "Outbound",
-              "sourcePortRanges": [],
-              "destinationPortRanges": [],
-              "sourceAddressPrefixes": [],
-              "destinationAddressPrefixes": []
-            }
-          },
-          {
-            "name": "AllowInternetOutBound",
-            "etag": "W/\"cc560460-80a1-48de-ada6-72fae7149ba6\"",
-            "properties": {
-              "provisioningState": "Succeeded",
-              "description": "Allow outbound traffic from all VMs to Internet",
-              "protocol": "*",
-              "sourcePortRange": "*",
-              "destinationPortRange": "*",
-              "sourceAddressPrefix": "*",
-              "destinationAddressPrefix": "Internet",
-              "access": "Allow",
-              "priority": 65001,
-              "direction": "Outbound",
-              "sourcePortRanges": [],
-              "destinationPortRanges": [],
-              "sourceAddressPrefixes": [],
-              "destinationAddressPrefixes": []
-            }
-          },
-          {
-            "name": "DenyAllOutBound",
-            "etag": "W/\"cc560460-80a1-48de-ada6-72fae7149ba6\"",
-            "properties": {
-              "provisioningState": "Succeeded",
-              "description": "Deny all outbound traffic",
-              "protocol": "*",
-              "sourcePortRange": "*",
-              "destinationPortRange": "*",
-              "sourceAddressPrefix": "*",
-              "destinationAddressPrefix": "*",
-              "access": "Deny",
-              "priority": 65500,
-              "direction": "Outbound",
-              "sourcePortRanges": [],
-              "destinationPortRanges": [],
-              "sourceAddressPrefixes": [],
-              "destinationAddressPrefixes": []
+              "priority": 101,
+              "direction": "Inbound"
             }
           }
         ]
       }
     },
     {
+      "apiVersion": "2017-04-01",
       "type": "Microsoft.Network/publicIPAddresses",
-      "apiVersion": "2019-06-01",
-      "name": "[variables('PublicIpAddress')]",
-      "location": "[resourceGroup().location]",
-      "sku": {
-        "name": "Basic",
-        "tier": "Regional"
-      },
-      "properties": {
-        "provisioningState": "Succeeded",
-        "resourceGuid": "c4c4e851-5815-4914-abeb-9292bd3ce331",
-        "ipAddress": "52.187.193.240",
-        "publicIPAddressVersion": "IPv4",
-        "publicIPAllocationMethod": "Static",
-        "idleTimeoutInMinutes": 4,
-        "ipTags": []
-      }
-    },
-    {
-      "type": "Microsoft.Network/virtualNetworks",
-      "apiVersion": "2019-06-01",
-      "name": "[variables('VirtualNetwork_Name')]",
+      "name": "[variables('PublicIpAddress_Name')]",
       "location": "[resourceGroup().location]",
       "properties": {
-        "provisioningState": "Succeeded",
-        "resourceGuid": "79e3c896-2538-4482-96a6-a543d704a4cf",
-        "addressSpace": {
-          "addressPrefixes": ["10.0.0.0/24"]
-        },
-        "subnets": [
-          {
-            "name": "default",
-            "etag": "W/\"0e751651-3508-45f8-9860-69754e53c190\"",
-            "properties": {
-              "provisioningState": "Succeeded",
-              "addressPrefix": "10.0.0.0/24",
-              "delegations": [],
-              "privateEndpointNetworkPolicies": "Enabled",
-              "privateLinkServiceNetworkPolicies": "Enabled"
-            }
-          }
-        ],
-        "virtualNetworkPeerings": [],
-        "enableDdosProtection": false,
-        "enableVmProtection": false
-      }
-    },
-    {
-      "type": "Microsoft.Compute/virtualMachines",
-      "apiVersion": "2019-03-01",
-      "name": "[parameters('VirtualMachine_Name')]",
-      "location": "[resourceGroup().location]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/networkInterfaces', variables('NetworkInterface_Name'))]"
-      ],
-      "properties": {
-        "hardwareProfile": {
-          "vmSize": "Standard_D2s_v3"
-        },
-        "storageProfile": {
-          "imageReference": {
-            "publisher": "Canonical",
-            "offer": "UbuntuServer",
-            "sku": "18.04-LTS",
-            "version": "latest"
-          },
-          "osDisk": {
-            "osType": "Linux",
-            "name": "[concat(parameters('VirtualMachine_Name'), '_disk1_e6a9eebe30cd43f9a1d5f8b3656cdb62')]",
-            "createOption": "FromImage",
-            "caching": "ReadWrite",
-            "managedDisk": {
-              "storageAccountType": "Premium_LRS"
-            },
-            "diskSizeGB": 30
-          },
-          "dataDisks": []
-        },
-        "osProfile": {
-          "computerName": "[parameters('VirtualMachine_Name')]",
-          "adminUsername": "[concat(parameters('VirtualMachine_Name'), 'admin')]",
-          "linuxConfiguration": {
-            "disablePasswordAuthentication": true,
-            "ssh": {
-              "publicKeys": [
-                {
-                  "path": "[concat('/home/', parameters('VirtualMachine_Name'), 'admin/.ssh/authorized_keys')]",
-                  "keyData": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDfC6dr0YY6shVTkJgZKkDo2ww/2DlT8LXXEwU6m7WLiFMo/WlwgOi2bRpwvetC1nwOVGVPACCyII+uUuZ/vYHh7RCCAZ4xaZtUEQgu34lRhfOAnG5hCVKdpFAQ0danBCv54XYTq+Edkxw29H3pQrgh0id7+z2p59+iCYYHXWddt7PhpedTW6qVf0my6DIB5GPKRNlooXN9jYjVjDtceGYtxNs/TjsQONrx60YYoJzmvQUAbbtb7ubeB4LDnKmr1a/w7Wf5ECQDFcsAkTbPg+DLyytRJqCgoL7V83SRrqnuhXiHFHZ6bXDGZTA2HKiCmWX5B9A9nb5isxNjcpxa6hXv81uBL49BIIiTABpZF5eptxwAW0eWqZ0j313OFJYk2fgWJig26xcP94DWX3x/AbJRxLwVjxCJ8nu6BNC+FM4mgdCA6RKQffPMlssSeSWxln9QvaNA0cXKcoN969GMDuhG9TppSUAPTKeU79OAuSEzx/bbSO7kxeX2xMiEbOBx1BJBFlFYAup22WHSQvlXhaS/jqZ8F6YUd6LwlB/n4kjD6TCE++Ty12KP8kTHTecCZhYh4fC20igJA80vhk0vPvgmrEmOU20DGGnEMJziJvRsyB9waN5AUp0vZdcgXwuH2f0SOMIhA1Guya549Hy0nkCyEcExpTrtjhV+XG1RFR3FzQ== contact@sethreid.co.nz"
-                }
-              ]
-            },
-            "provisionVMAgent": true
-          },
-          "secrets": [],
-          "allowExtensionOperations": true
-        },
-        "networkProfile": {
-          "networkInterfaces": [
-            {
-              "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('NetworkInterface_Name'))]"
-            }
-          ]
+        "publicIPAllocationMethod": "[variables('PublicIpAddress_Type')]",
+        "dnsSettings": {
+          "domainNameLabel": "[variables('PublicIpAddress_DNSName')]"
         }
       }
     },
     {
-      "type": "Microsoft.Network/networkSecurityGroups/securityRules",
-      "apiVersion": "2019-06-01",
-      "name": "[concat(variables('NetworkSecurityGroup_name'), '/any-tcp')]",
+      "apiVersion": "2017-04-01",
+      "type": "Microsoft.Network/virtualNetworks",
+      "name": "[variables('VirtualNetwork_Name')]",
+      "location": "[resourceGroup().location]",
       "dependsOn": [
-        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('NetworkSecurityGroup_name'))]"
+        "[concat('Microsoft.Network/networkSecurityGroups/', variables('NetworkSecurityGroup_Name'))]"
       ],
       "properties": {
-        "provisioningState": "Succeeded",
-        "protocol": "TCP",
-        "sourcePortRange": "*",
-        "destinationPortRange": "*",
-        "sourceAddressPrefix": "*",
-        "destinationAddressPrefix": "*",
-        "access": "Allow",
-        "priority": 100,
-        "direction": "Inbound",
-        "sourcePortRanges": [],
-        "destinationPortRanges": [],
-        "sourceAddressPrefixes": [],
-        "destinationAddressPrefixes": []
+        "addressSpace": {
+          "addressPrefixes": [
+            "[variables('AddressPrefix')]"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "[variables('Subnet_Name')]",
+            "properties": {
+              "addressPrefix": "[variables('Subnet_Prefix')]",
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('NetworkSecurityGroup_Name'))]"
+              }
+            }
+          }
+        ]
       }
     },
     {
-      "type": "Microsoft.Network/networkSecurityGroups/securityRules",
-      "apiVersion": "2019-06-01",
-      "name": "[concat(variables('NetworkSecurityGroup_name'), '/SSH')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('NetworkSecurityGroup_name'))]"
-      ],
-      "properties": {
-        "provisioningState": "Succeeded",
-        "protocol": "TCP",
-        "sourcePortRange": "*",
-        "destinationPortRange": "22",
-        "sourceAddressPrefix": "*",
-        "destinationAddressPrefix": "*",
-        "access": "Allow",
-        "priority": 300,
-        "direction": "Inbound",
-        "sourcePortRanges": [],
-        "destinationPortRanges": [],
-        "sourceAddressPrefixes": [],
-        "destinationAddressPrefixes": []
-      }
-    },
-    {
-      "type": "Microsoft.Network/virtualNetworks/subnets",
-      "apiVersion": "2019-06-01",
-      "name": "[concat(variables('VirtualNetwork_Name'), '/default')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/virtualNetworks', variables('VirtualNetwork_Name'))]"
-      ],
-      "properties": {
-        "provisioningState": "Succeeded",
-        "addressPrefix": "10.0.0.0/24",
-        "delegations": [],
-        "privateEndpointNetworkPolicies": "Enabled",
-        "privateLinkServiceNetworkPolicies": "Enabled"
-      }
-    },
-    {
+      "apiVersion": "2017-04-01",
       "type": "Microsoft.Network/networkInterfaces",
-      "apiVersion": "2019-06-01",
       "name": "[variables('NetworkInterface_Name')]",
       "location": "[resourceGroup().location]",
       "dependsOn": [
-        "[resourceId('Microsoft.Network/publicIPAddresses', variables('PublicIpAddress'))]",
-        "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('VirtualNetwork_Name'), 'default')]",
-        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('NetworkSecurityGroup_name'))]"
+        "[concat('Microsoft.Network/publicIPAddresses/', variables('PublicIpAddress_Name'))]",
+        "[concat('Microsoft.Network/virtualNetworks/', variables('VirtualNetwork_Name'))]"
       ],
       "properties": {
-        "provisioningState": "Succeeded",
-        "resourceGuid": "a59c0088-5091-4c96-900f-f38f088cafa5",
         "ipConfigurations": [
           {
             "name": "ipconfig1",
-            "etag": "W/\"911ee611-fb72-4c45-a4c3-1e642e083ea2\"",
             "properties": {
-              "provisioningState": "Succeeded",
-              "privateIPAddress": "10.0.0.4",
               "privateIPAllocationMethod": "Dynamic",
               "publicIPAddress": {
-                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('PublicIpAddress'))]"
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('PublicIpAddress_Name'))]"
               },
               "subnet": {
-                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('VirtualNetwork_Name'), 'default')]"
-              },
-              "primary": true,
-              "privateIPAddressVersion": "IPv4"
+                "id": "[variables('Subnet_Ref')]"
+              }
             }
           }
-        ],
-        "dnsSettings": {
-          "dnsServers": [],
-          "appliedDnsServers": [],
-          "internalDomainNameSuffix": "s1eog4jyewbejfvguvb3obfezh.px.internal.cloudapp.net"
+        ]
+      }
+    },
+    {
+      "apiVersion": "2017-03-30",
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "[variables('VirtualNetwork_Name')]",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[concat('Microsoft.Network/networkInterfaces/', variables('NetworkInterface_Name'))]"
+      ],
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[parameters('VirtualMachine_Size')]"
         },
-        "macAddress": "00-0D-3A-D1-D3-94",
-        "enableAcceleratedNetworking": false,
-        "enableIPForwarding": false,
-        "networkSecurityGroup": {
-          "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('NetworkSecurityGroup_name'))]"
+        "osProfile": {
+          "computerName": "[variables('VirtualNetwork_Name')]",
+          "adminUsername": "[parameters('Authentication_UserName')]",
+          "adminPassword": "[parameters('Authentication_PasswordOrKey')]",
+          "linuxConfiguration": "[if(equals(parameters('Authentication_Type'), 'password'), json('null'), variables('VirtualMachine_LinuxConfiguration'))]"
         },
-        "primary": true,
-        "tapConfigurations": []
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "[variables('VirtualMachine_ImagePublisher')]",
+            "offer": "[variables('VirtualMachine_ImageOffer')]",
+            "sku": "[variables('VirtualMachine_UbuntuOSVersion')]",
+            "version": "latest"
+          },
+          "osDisk": {
+            "caching": "ReadWrite",
+            "createOption": "FromImage",
+            "diskSizeGB": "100"
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',variables('NetworkInterface_Name'))]"
+            }
+          ]
+        }
       }
     }
   ]
