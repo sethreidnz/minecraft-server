@@ -32,14 +32,17 @@ stages:
           ## Run the dotnet build/publish
           - script: |
               dotnet publish $(WebApp_ProjectFile) --configuration $(WebApp_BuildConfiguration) --output $(Build.ArtifactStagingDirectory)
+            displayName: Public dotnet web app
 
           - task: CopyFiles@2
+            displayName: Copy ARM template
             inputs:
               contents: $(ARM_TemplatePath)
               targetFolder: $(Build.ArtifactStagingDirectory)
 
           ## Archive the files into a zip file for publishing
           - task: ArchiveFiles@2
+            displayName: Zip build artifacts
             inputs:
               rootFolderOrFile: $(Build.ArtifactStagingDirectory)
               archiveType: "zip"
@@ -48,6 +51,7 @@ stages:
 
           ## Publish the zip file
           - task: PublishBuildArtifacts@1
+            displayName: Publish build artifacts
             inputs:
               pathtoPublish: "$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip"
               artifactName: "WebApp"
