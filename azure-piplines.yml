@@ -21,7 +21,7 @@ variables:
 
 stages:
   # Download and build the project
-  - stage: Build
+  - stage: build
     displayName: Build
     jobs:
       - job: run_build
@@ -57,7 +57,7 @@ stages:
               artifactName: drop
 
   # Deploy the resources and application
-  - stage: Deploy
+  - stage: deploy-resource-group
     displayName: Deploy Resource Group
     jobs:
     - deployment: Production
@@ -81,7 +81,6 @@ stages:
                 deploymentMode: 'Incremental'
                 overrideParameters: >-
                   -AppServicePlan_Name "$(AppServicePlan_Name)"
-                  -AppServicePlan_SubscriptionId "$(AppServicePlan_SubscriptionId)"
                   -AppServicePlan_ResourceGroupName "$(AppServicePlan_ResourceGroupName)"
                   -VirtualMachine_Name  "$(VirtualMachine_Name)"
                   -WebApp_SiteName "$(WebApp_SiteName)"

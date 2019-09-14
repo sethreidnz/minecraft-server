@@ -8,9 +8,6 @@
     "AppServicePlan_Name": {
       "type": "string"
     },
-    "AppServicePlan_SubscriptionId": {
-      "type": "string"
-    },
     "AppServicePlan_ResourceGroupName": {
       "type": "string"
     },
@@ -24,7 +21,7 @@
     "VirtualNetwork_Name": "[concat(parameters('VirtualMachine_Name'), '-vnet')]",
     "NetworkSecurityGroup_name": "[concat(parameters('VirtualMachine_Name'), '-nsg')]",
     "Disk_Name": "[concat(parameters('VirtualMachine_Name'), '-disk')]",
-    "AppServicePlan_Id": "[concat('/subscriptions/', parameters('AppServicePlan_SubscriptionId') ,'/resourceGroups/', parameters('AppServicePlan_ResourceGroupName') ,'/providers/Microsoft.Web/serverfarms/', parameters('AppServicePlan_Name'))]"
+    "AppServicePlan_Id": "[concat('subscriptions/', subscription().id ,'/resourceGroups/', parameters('AppServicePlan_ResourceGroupName') ,'/providers/Microsoft.Web/serverfarms/', parameters('AppServicePlan_Name'))]"
   },
   "resources": [
     {
