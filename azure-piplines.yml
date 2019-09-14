@@ -19,6 +19,7 @@ variables:
   WebApp_ProjectName: MinecraftServer.Web
   WebApp_SiteName: minecraft-tekkit
   VirtualMachine_Name: minecraft-tekkit
+  VirtualMachine_DnsName: minecraft-tekkit
 
 stages:
   # Download and build the project
@@ -81,10 +82,8 @@ stages:
                 csmFile: $(Pipeline.Workspace)/drop/azure-deploy.json
                 deploymentMode: 'Incremental'
                 overrideParameters: >-
-                  -AppServicePlan_Name "$(AppServicePlan_Name)"
-                  -Authentication_UserName "$(Authentication_UserName)"
-                  -Authentication_PasswordOrKey "$(Authentication_PasswordOrKey)"
-                  -VirtualMachine_Name  "$(VirtualMachine_Name)"
-                  -WebApp_SiteName "$(WebApp_SiteName)"
+                  -adminUsername "$(Authentication_UserName)"
+                  -dnsNameForPublicIP "$(VirtualMachine_DnsName)"
+                  -adminPasswordOrKey "$(Authentication_PasswordOrKey)"
 
 
