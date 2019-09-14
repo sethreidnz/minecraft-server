@@ -21,7 +21,7 @@
     "VirtualNetwork_Name": "[concat(parameters('VirtualMachine_Name'), '-vnet')]",
     "NetworkSecurityGroup_name": "[concat(parameters('VirtualMachine_Name'), '-nsg')]",
     "Disk_Name": "[concat(parameters('VirtualMachine_Name'), '-disk')]",
-    "AppServicePlan_Id": "[concat('/subscriptions/', subscription().id,'/resourcegroups/', parameters('AppServicePlan_ResourceGroupName'), '/providers/Microsoft.Web/serverfarms/', parameters('AppServicePlan_Name'))]"
+    "AppServicePlan_Id": "[concat('/subscriptions/', subscription().id, '/resourcegroups/', parameters('AppServicePlan_ResourceGroupName'), '/providers/Microsoft.Web/serverfarms/', parameters('AppServicePlan_Name'))]"
   },
   "resources": [
     {
@@ -44,7 +44,7 @@
             "hostType": "Repository"
           }
         ],
-        "serverFarmId": "[variables('AppServicePlan_Id')]",
+        "serverFarmId": "[concat('/subscriptions/', subscription().id, '/resourcegroups/', parameters('AppServicePlan_ResourceGroupName'), '/providers/Microsoft.Web/serverfarms/', parameters('AppServicePlan_Name'))]",
         "reserved": false,
         "scmSiteAlsoStopped": false,
         "clientAffinityEnabled": true,
