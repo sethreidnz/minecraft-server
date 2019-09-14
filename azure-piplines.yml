@@ -59,10 +59,10 @@ stages:
 
   # Deploy the resources and application
   - stage: Deploy
-    displayName: Production
+    displayName: Deploy Resource Group
     jobs:
     - deployment: Production
-      displayName: Production
+      displayName: Deploy Resource Group
       pool:
         vmImage: 'windows-latest'
       environment: 'production'
