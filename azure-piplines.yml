@@ -21,7 +21,7 @@ variables:
 
 stages:
   # Download and build the project
-  - stage: build
+  - stage: Build
     displayName: Build
     jobs:
       - job: run_build
@@ -57,7 +57,7 @@ stages:
               artifactName: drop
 
   # Deploy the resources and application
-  - stage: deploy-resource-group
+  - stage: DeployResourceGroup
     displayName: Deploy Resource Group
     jobs:
     - deployment: Production
