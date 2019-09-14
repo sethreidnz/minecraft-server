@@ -34,7 +34,7 @@ stages:
           ## Run the dotnet build/publish
           - script: |
               dotnet publish $(WebApp_ProjectFile) --configuration $(WebApp_BuildConfiguration) --output $(WebApp_OutputFolder)
-            displayName: Public dotnet web app
+            displayName: Publish dotnet web app
 
           - task: CopyFiles@2
             displayName: Copy ARM template
