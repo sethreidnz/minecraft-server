@@ -3,23 +3,18 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "WebApp_SiteName": {
-      "defaultValue": "minecraft-server",
       "type": "string"
     },
     "AppServicePlan_Name": {
-      "defaultValue": "minecraft-server",
       "type": "string"
     },
     "AppServicePlan_SubscriptionId": {
-      "defaultValue": "minecraft-server",
       "type": "string"
     },
     "AppServicePlan_ResourceGroupName": {
-      "defaultValue": "minecraft-server",
       "type": "string"
     },
     "VirtualMachine_Name": {
-      "defaultValue": "minecraft",
       "type": "string"
     }
   },

@@ -1,38 +1,85 @@
 # Only run against master
 trigger:
-- master
+  - master
 
 # Don't run against PRs
 pr: none
 
 variables:
+  AppServicePlan_Name: free-app-service
+  AppServicePlan_ResourceGroup: free-app-service
+  AppServicePlan_SubscriptionId: 2fb0e5d3-72a4-49c4-80a8-892de5ea8bd7
+  ARM_TemplatePath: $(Build.SourcesDirectory)/azure-deploy.json
+  ResourceGroup_Location: 'Australia East'
+  ResourceGroup_Name: minecraft
   WebApp_BuildConfiguration: Release
-  WebApp_ProjectName: MinecraftServer.Web
   WebApp_ProjectDirectory: $(Build.SourcesDirectory)/src/$(WebApp_ProjectName)
   WebApp_ProjectFile: $(WebApp_ProjectDirectory)/$(WebApp_ProjectName).csproj
+  WebApp_ProjectName: MinecraftServer.Web
+  WebApp_SiteName: minecraft-tekkit
+  VirtualMachine_Name: minecraft-tekkit
 
 stages:
-- stage: build
-  jobs:
-  - job: run_build
-    pool:
-      vmImage: 'Ubuntu 16.04'
-    steps:
+  - stage: Build
+    # Download and build the project
+    jobs:
+      - job: run_build
+        pool:
+          vmImage: "windows-latest"
+        steps:
 
-    ## Run the dotnet build/publish
-    - script: |
-        dotnet build $(WebApp_ProjectFile) --configuration $(WebApp_BuildConfiguration)
-        dotnet publish $(WebApp_ProjectFile) --configuration $(WebApp_BuildConfiguration) --output $(Build.ArtifactStagingDirectory)
+          ## Run the dotnet build/publish
+          - script: |
+              dotnet build $(WebApp_ProjectFile) --configuration $(WebApp_BuildConfiguration)
+              dotnet publish $(WebApp_ProjectFile) --configuration $(WebApp_BuildConfiguration) --output $(Build.ArtifactStagingDirectory)
 
-    ## Archive the files into a zip file for publishing
-    - task: ArchiveFiles@2
-      inputs:
-        rootFolderOrFile: $(Build.ArtifactStagingDirectory)
-        archiveType: 'zip'
-        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
-        includeRootFolder: false
+          - task: CopyFiles@2
+            contents: '**/azure-deploy.json'
+            targetFolder: $(Build.ArtifactStagingDirectory)
 
-    ## Publish the zip file
-    - task: PublishBuildArtifacts@1
-      inputs:
-        pathtoPublish: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+          ## Archive the files into a zip file for publishing
+          - task: ArchiveFiles@2
+            inputs:
+              rootFolderOrFile: $(Build.ArtifactStagingDirectory)
+              archiveType: "zip"
+              archiveFile: "$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip"
+              includeRootFolder: false
+
+          ## Publish the zip file
+          - task: PublishBuildArtifacts@1
+            inputs:
+              pathtoPublish: "$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip"
+              artifactName: "WebApp"
+
+  - stage: deploy
+    jobs:
+      # track deployments on the environment
+    - deployment: DeployWebApp
+      displayName: Deploy Web App
+      pool:
+        vmImage: 'windows-latest'
+      # creates an environment if it doesn't exist
+      environment: 'production'
+      strategy:
+        # default deployment strategy, more coming...
+        runOnce:
+          deploy:
+            steps:
+            - download: current
+              artifact: WebApp
+            - task: AzureResourceGroupDeployment@2
+              displayName: 'ARM deployment'
+              inputs:
+                azureSubscription: 'Microsoft Azure Sponsorship (15253eaa-8a37-4163-8903-aa688499a16f)'
+                resourceGroupName: $(ARM_ResourceGroupName)
+                location: $(ARM_Location)
+                csmFile: $(ARM_TemplatePath)
+                deploymentMode: 'Incremental'
+                overrideParameters: >-
+                  -AppServicePlan_Name "$(AppServicePlan_Name)"
+                  -AppServicePlan_SubscriptionId "$(AppServicePlan_SubscriptionId)"
+                  -AppServicePlan_ResourceGroupName "$(AppServicePlan_ResourceGroupName)"
+                  -VirtualMachine_Name  "$(VirtualMachine_Name)"
+                  -WebApp_SiteName $(WebApp_SiteName)
+
+
