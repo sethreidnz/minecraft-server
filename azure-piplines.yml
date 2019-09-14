@@ -86,6 +86,6 @@ stages:
                   -AppServicePlan_SubscriptionId "$(AppServicePlan_SubscriptionId)"
                   -AppServicePlan_ResourceGroupName "$(AppServicePlan_ResourceGroupName)"
                   -VirtualMachine_Name  "$(VirtualMachine_Name)"
-                  -WebApp_SiteName $(WebApp_SiteName)
+                  -WebApp_SiteName "$(WebApp_SiteName)"
 
 
