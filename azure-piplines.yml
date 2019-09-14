@@ -82,8 +82,10 @@ stages:
                 csmFile: $(Pipeline.Workspace)/drop/azure-deploy.json
                 deploymentMode: 'Incremental'
                 overrideParameters: >-
-                  -adminUsername "$(Authentication_UserName)"
-                  -dnsNameForPublicIP "$(VirtualMachine_DnsName)"
                   -adminPasswordOrKey "$(Authentication_PasswordOrKey)"
+                  -adminUsername "$(Authentication_UserName)"
+                  -appServiceName "$(WebApp_SiteName)"
+                  -appServicePlanName "$(AppServicePlan_Name)"
+                  -dnsNameForPublicIP "$(VirtualMachine_DnsName)"
 
 

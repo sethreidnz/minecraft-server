@@ -54,6 +54,19 @@
       "metadata": {
         "description": "SSH Key or password for the Virtual Machine. SSH key is recommended."
       }
+    },
+    "appServicePlanName": {
+      "type": "string"
+    },
+    "appServicePlanSku": {
+      "type": "string",
+      "defaultValue" : "S1",
+      "metadata": {
+        "description": "The SKU of App Service Plan, by default is Standard S1"
+      }
+    },
+    "appServiceName": {
+      "type": "string"
     }
   },
   "variables": {
@@ -84,6 +97,31 @@
     }
   },
   "resources": [
+    {
+      "apiVersion": "2018-02-01",
+      "type": "Microsoft.Web/serverfarms",
+      "kind": "app",
+      "name": "[parameters('appServicePlanName')]",
+      "location": "[resourceGroup().location]",
+      "properties": {},
+      "dependsOn": [],
+      "sku": {
+        "name": "[parameters('appServicePlanSku')]"
+      }
+    },
+    {
+      "apiVersion": "2018-11-01",
+      "type": "Microsoft.Web/sites",
+      "kind": "app",
+      "name": "[parameters('appServiceName')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]"
+      ]
+    },
     {
       "apiVersion": "2017-04-01",
       "type": "Microsoft.Network/networkSecurityGroups",
