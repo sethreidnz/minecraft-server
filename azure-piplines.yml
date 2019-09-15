@@ -87,3 +87,28 @@ stages:
                   -appServiceName "$(WebApp_SiteName)"
                   -appServicePlanName "$(AppServicePlan_Name)"
                   -dnsNameForPublicIP "$(VirtualMachine_DnsName)"
+
+  # Deploy the resources and application
+  - stage: Production
+    dependsOn:
+    - Build
+    - DeployResourceGroup
+    displayName: Production
+    jobs:
+    - deployment: Production
+      displayName: Deploy Resource Group
+      pool:
+        vmImage: 'windows-latest'
+      environment: 'production'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+            - download: current
+              artifact: drop
+            - task: AzureRmWebAppDeployment@4
+              displayName: 'Deploy web app'
+              inputs:
+                azureSubscription: '$(AzureSubscription)'
+                WebAppName: $(WebApp_SiteName)
+                packageForLinux: '$(Pipeline.Workspace)/drop/Web.zip'
