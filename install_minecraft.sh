@@ -6,8 +6,7 @@ minecraft_group=minecraft
 memoryAllocs=8g
 memoryAllocx=12g
 server_jar=Hexxit.jar
-
-MOD_SERVER_DOWNLOAD_URL="http://servers.technicpack.net/Technic/servers/hexxit/Hexxit_Server_v1.0.10.zip"
+mod_server_uri="http://servers.technicpack.net/Technic/servers/hexxit/Hexxit_Server_v1.0.10.zip"
 
 # add and update repos
 while ! echo y | apt-get install -y software-properties-common; do
@@ -40,7 +39,7 @@ mkdir $minecraft_server_path
 cd $minecraft_server_path
 
 # download the server zip
-wget -qO- -O tmp.zip "http://servers.technicpack.net/Technic/servers/hexxit/Hexxit_Server_v1.0.10.zip" && unzip tmp.zip && rm tmp.zip
+wget -qO- -O tmp.zip $mod_server_uri && unzip tmp.zip && rm tmp.zip
 
 # set permissions on install folder
 chown -R $minecraft_user $minecraft_server_path
