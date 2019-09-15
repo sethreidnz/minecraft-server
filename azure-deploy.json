@@ -280,7 +280,7 @@
         "autoUpgradeMinorVersion": true,
         "settings": {
           "fileUris": [
-            "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/minecraft-on-ubuntu/install_minecraft.sh"
+            "https://raw.githubusercontent.com/sethreidnz/minecraft-server/master/install_minecraft.sh"
           ],
           "commandToExecute": "[concat('bash install_minecraft.sh')]"
         }
