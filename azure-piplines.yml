@@ -92,8 +92,8 @@ stages:
   # Deploy the resources and application
   - stage: Production
     dependsOn:
-      - Build
-      - DeployResourceGroup
+    - Build
+    - DeployResourceGroup
     displayName: Production
       jobs:
       - deployment: Production
