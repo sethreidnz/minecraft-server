@@ -16,7 +16,7 @@
     },
     "virtualMachineSize": {
       "type": "string",
-      "defaultValue": "A2m_v2",
+      "defaultValue": "Standard_A2m_v2",
       "metadata": {
         "description": "This is the Azure Virtual Machine size, and will affect the cost. If you don't know, just leave the default value."
       }
