@@ -250,29 +250,28 @@
         }
       },
       "resources": [
-        {
-          "apiVersion": "2018-09-15",
-          "type": "microsoft.devtestlab/schedules",
-          "name": "[concat('shutdown-computevm-', variables('vmName'))]",
-          "location": "[resourceGroup().location]",
-          "dependsOn": [
-            "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'))]"
-          ],
-          "properties": {
-            "status": "Enabled",
-            "taskType": "ComputeVmShutdownTask",
-            "dailyRecurrence": {
-              "time": "0300"
-            },
-            "timeZoneId": "New Zealand Standard Time",
-            "notificationSettings": {
-              "status": "Disabled",
-              "timeInMinutes": 15
-            },
-            "targetResourceId": "[resourceId('Microsoft.Compute/virtualMachines', variables('vmName'))]"
-          }
-        }
       ]
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(variables('vmName'),'/newuserscript')]",
+      "apiVersion": "2017-03-30",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'))]"
+      ],
+      "properties": {
+        "publisher": "Microsoft.Azure.Extensions",
+        "type": "CustomScript",
+        "typeHandlerVersion": "2.0",
+        "autoUpgradeMinorVersion": true,
+        "settings": {
+          "fileUris": [
+            "https://raw.githubusercontent.com/sethreidnz/minecraft-server/master/install_minecraft.sh"
+          ],
+          "commandToExecute": "[concat('bash install_minecraft.sh')]"
+        }
+      }
     }
   ]
 }
