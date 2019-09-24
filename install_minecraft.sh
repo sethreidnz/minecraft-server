@@ -10,24 +10,31 @@ mod_server_uri="http://servers.technicpack.net/Technic/servers/hexxit/Hexxit_Ser
 
 if [ ! -d "$minecraft_server_path" ]; then
 
-    DEBIAN_FRONTEND=noninteractive
-    apt update
-    apt install unzip
-    apt install openjdk-8-jre-headless 
-
-    # # create user and install folder
-    mkdir -p $minecraft_server_path;
+    # create server folder
+    mkdir $minecraft_server_path;
     cd $minecraft_server_path;
+
+    while ! echo y | apt-get install -y unzip; do
+        sleep 10
+        apt-get install -y unzip
+    done
+
+    while ! echo y | apt-get install -y openjdk-8-jre-headless; do
+        sleep 10
+        apt-get install -y openjdk-8-jre-headless
+    done
+
+    # create user and group for running the server
     adduser --system --no-create-home --home $minecraft_server_path $minecraft_user
     addgroup --system $minecraft_group
 
     # download the server zip
     wget -qO- -O tmp.zip $mod_server_uri && unzip tmp.zip && rm tmp.zip
 
-    # # set permissions on install folder
+    # set permissions on server folder
     chown -R $minecraft_user $minecraft_server_path
 
-    # # create a service
+    # create a service to run minecraft
     touch /etc/systemd/system/minecraft-server.service
     printf '[Unit]\nDescription=Minecraft Service\nAfter=rc-local.service\n' >> /etc/systemd/system/minecraft-server.service
     printf '[Service]\nWorkingDirectory=%s\n' $minecraft_server_path >> /etc/systemd/system/minecraft-server.service
