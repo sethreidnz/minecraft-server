@@ -35,3 +35,4 @@ printf '[Install]\nWantedBy=multi-user.target\nAlias=minecraft-server.service' >
 chmod +x /etc/systemd/system/minecraft-server.service
 
 systemctl start minecraft-server
+systemctl enable minecraft-server

@@ -31,10 +31,7 @@
     "authenticationType": {
       "type": "string",
       "defaultValue": "sshPublicKey",
-      "allowedValues": [
-        "sshPublicKey",
-        "password"
-      ],
+      "allowedValues": ["sshPublicKey", "password"],
       "metadata": {
         "description": "Type of authentication to use on the Virtual Machine. SSH key is recommended."
       }
@@ -50,7 +47,7 @@
     },
     "appServicePlanSku": {
       "type": "string",
-      "defaultValue" : "S1",
+      "defaultValue": "S1",
       "metadata": {
         "description": "The SKU of App Service Plan, by default is Standard S1"
       }
@@ -172,9 +169,7 @@
       ],
       "properties": {
         "addressSpace": {
-          "addressPrefixes": [
-            "[variables('addressPrefix')]"
-          ]
+          "addressPrefixes": ["[variables('addressPrefix')]"]
         },
         "subnets": [
           {
@@ -253,7 +248,31 @@
             }
           ]
         }
-      }
+      },
+      "resources": [
+        {
+          "apiVersion": "2018-09-15",
+          "type": "microsoft.devtestlab/schedules",
+          "name": "[concat(variables('vmName'), 'auto-shutdown-schedule')]",
+          "location": "[resourceGroup().location]",
+          "dependsOn": [
+            "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'))]"
+          ],
+          "properties": {
+            "status": "Enabled",
+            "taskType": "ComputeVmShutdownTask",
+            "dailyRecurrence": {
+              "time": "0300"
+            },
+            "timeZoneId": "New Zealand Standard Time",
+            "notificationSettings": {
+              "status": "Disabled",
+              "timeInMinutes": 15
+            },
+            "targetResourceId": "[resourceId('Microsoft.Compute/virtualMachines', variables('vmName'))]"
+          }
+        }
+      ]
     },
     {
       "type": "Microsoft.Compute/virtualMachines/extensions",
