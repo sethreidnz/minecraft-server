@@ -8,31 +8,35 @@ memoryAllocx=12g
 server_jar=Hexxit.jar
 mod_server_uri="http://servers.technicpack.net/Technic/servers/hexxit/Hexxit_Server_v1.0.10.zip"
 
-DEBIAN_FRONTEND=noninteractive
-apt update
-apt install unzip
-apt install openjdk-8-jre-headless 
+if [ ! -d "$minecraft_server_path" ]; then
 
-# # create user and install folder
-mkdir -p $minecraft_server_path;
-cd $minecraft_server_path;
-adduser --system --no-create-home --home $minecraft_server_path $minecraft_user
-addgroup --system $minecraft_group
+    DEBIAN_FRONTEND=noninteractive
+    apt update
+    apt install unzip
+    apt install openjdk-8-jre-headless 
 
-# download the server zip
-wget -qO- -O tmp.zip $mod_server_uri && unzip tmp.zip && rm tmp.zip
+    # # create user and install folder
+    mkdir -p $minecraft_server_path;
+    cd $minecraft_server_path;
+    adduser --system --no-create-home --home $minecraft_server_path $minecraft_user
+    addgroup --system $minecraft_group
 
-# # set permissions on install folder
-chown -R $minecraft_user $minecraft_server_path
+    # download the server zip
+    wget -qO- -O tmp.zip $mod_server_uri && unzip tmp.zip && rm tmp.zip
 
-# # create a service
-touch /etc/systemd/system/minecraft-server.service
-printf '[Unit]\nDescription=Minecraft Service\nAfter=rc-local.service\n' >> /etc/systemd/system/minecraft-server.service
-printf '[Service]\nWorkingDirectory=%s\n' $minecraft_server_path >> /etc/systemd/system/minecraft-server.service
-printf 'ExecStart=/usr/bin/java -Xms%s -Xmx%s -jar %s/%s nogui\n' $memoryAllocs $memoryAllocx $minecraft_server_path $server_jar >> /etc/systemd/system/minecraft-server.service
-printf 'ExecReload=/bin/kill -HUP $MAINPID\nKillMode=process\nRestart=on-failure\n' >> /etc/systemd/system/minecraft-server.service
-printf '[Install]\nWantedBy=multi-user.target\nAlias=minecraft-server.service' >> /etc/systemd/system/minecraft-server.service
-chmod +x /etc/systemd/system/minecraft-server.service
+    # # set permissions on install folder
+    chown -R $minecraft_user $minecraft_server_path
 
-systemctl start minecraft-server
-systemctl enable minecraft-server
+    # # create a service
+    touch /etc/systemd/system/minecraft-server.service
+    printf '[Unit]\nDescription=Minecraft Service\nAfter=rc-local.service\n' >> /etc/systemd/system/minecraft-server.service
+    printf '[Service]\nWorkingDirectory=%s\n' $minecraft_server_path >> /etc/systemd/system/minecraft-server.service
+    printf 'ExecStart=/usr/bin/java -Xms%s -Xmx%s -jar %s/%s nogui\n' $memoryAllocs $memoryAllocx $minecraft_server_path $server_jar >> /etc/systemd/system/minecraft-server.service
+    printf 'ExecReload=/bin/kill -HUP $MAINPID\nKillMode=process\nRestart=on-failure\n' >> /etc/systemd/system/minecraft-server.service
+    printf '[Install]\nWantedBy=multi-user.target\nAlias=minecraft-server.service' >> /etc/systemd/system/minecraft-server.service
+    chmod +x /etc/systemd/system/minecraft-server.service
+
+    systemctl start minecraft-server
+    systemctl enable minecraft-server
+
+fi
