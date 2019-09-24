@@ -15,21 +15,8 @@ if [ ! -d "$minecraft_server_path" ]; then
     cd $minecraft_server_path;
 
     apt-get update
-
-    while ! echo y | apt-get install -y software-properties-common; do
-        sleep 10
-        apt-get install -y software-properties-common
-    done
-
-    while ! echo y | apt-get install -y unzip; do
-        sleep 10
-        apt-get install -y unzip
-    done
-
-    while ! echo y | apt-get install -y openjdk-8-jre-headless; do
-        sleep 10
-        apt-get install -y openjdk-8-jre-headless
-    done
+    apt-get install -y software-properties-common;
+    apt-get install -y unzip
 
     # create user and group for running the server
     adduser --system --no-create-home --home $minecraft_server_path $minecraft_user
