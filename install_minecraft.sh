@@ -14,6 +14,13 @@ if [ ! -d "$minecraft_server_path" ]; then
     mkdir $minecraft_server_path;
     cd $minecraft_server_path;
 
+    apt-get update
+
+    while ! echo y | apt-get install -y software-properties-common; do
+        sleep 10
+        apt-get install -y software-properties-common
+    done
+
     while ! echo y | apt-get install -y unzip; do
         sleep 10
         apt-get install -y unzip
