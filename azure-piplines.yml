@@ -60,6 +60,7 @@ stages:
   - stage: DeployResourceGroup
     displayName: Deploy Resource Group
     dependsOn: Build
+    condition: succeeded()
     jobs:
     - deployment: Arm
       displayName: Deploy Resource Group
@@ -94,6 +95,7 @@ stages:
     dependsOn:
     - Build
     - DeployResourceGroup
+    condition: succeeded()
     displayName: Production
     jobs:
     - deployment: Production
