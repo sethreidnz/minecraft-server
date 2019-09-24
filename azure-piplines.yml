@@ -7,8 +7,6 @@ pr: none
 
 variables:
   AppServicePlan_Name: minecraft-tekkit
-  Authentication_PasswordOrKey: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDDNiOsl6Yb6pZPQSrvL5D2mLMwA5NJUAmZITGSDP6I5hW/fnFeI+Mi3RzgcPFBc1ZEoRGE87QEtkl/t/lRA0Svi5oreXRo2onJaTZ/2yqZkzjeScKLaLetmSLSL1V1vIkOy5OM2lk2zt9Hqc1Q/vx3lqM2l+Z/rrHnscoEDhdvaI9BZmncyFv0cM25HPHwlvp1qsY9xZs+zqcA4vmY4zmR+w4roPr59fTrD9WyOIdXG6Sx76nYJ7ECB/Wix2bQHxvNZFl4Ybgi9ElKSGyUiCa87Q0WCerCD+2VX5XqdfRCYCame9Bu0fLi4RYV3wdT9SeC4P5fvoSBvFAWMRmfN0KmZxImhgVmlsuHUoEniOkNUpz8/Kz4vaYpJ+HdAORzpEziwdo18oSIhCMefx8SPW57neU/xEL6IGrXxUU+dJnPnyuowk8YZPBX3nK0g/2Yluehc+Dkd1VXdiwkSIHuQg8BKTS1nCpcluMCVBaxNoY6Vx/ItR0jexJlkBz4T5FNCf4pxbrIVmvn9vvrjwEoyYwFXr+n91j4ZSCdsN7BpP8LNT3OKBAcwW5eBnAsDWPNV0C3DfJNL2NV1xtOVkze0Lk0fPLJ+Ui9v4xa7kvdOG2N8vOSF7PLlo2CG0kPvl2v+mAmXqtpZZOgFQuhLVD7lxbHbJfslpKW/tgsKNoUrVQ/tQ== contact@sethreid.co.nz
-  Authentication_UserName: minecraft-admin
   AzureSubscription: Microsoft Azure Sponsorship (15253eaa-8a37-4163-8903-aa688499a16f)
   ResourceGroup_Location: 'Australia East'
   ResourceGroup_Name: minecraft-tekkit
@@ -68,6 +66,8 @@ stages:
       pool:
         vmImage: 'windows-latest'
       environment: 'production'
+      variables:
+        - group: MinecraftServer_Variables_Shared
       strategy:
         runOnce:
           deploy:
@@ -83,7 +83,7 @@ stages:
                 csmFile: $(Pipeline.Workspace)/drop/azure-deploy.json
                 deploymentMode: 'Incremental'
                 overrideParameters: >-
-                  -adminPasswordOrKey "$(Authentication_PasswordOrKey)"
+                  -adminPasswordOrKey "$(Authentication_PublicKey)"
                   -adminUsername "$(Authentication_UserName)"
                   -appServiceName "$(WebApp_SiteName)"
                   -appServicePlanName "$(AppServicePlan_Name)"

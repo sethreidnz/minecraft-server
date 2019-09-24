@@ -69,7 +69,7 @@
     "subnetName": "subnet",
     "subnetPrefix": "10.0.0.0/24",
     "publicIPAddressName": "minecraftpublicip",
-    "publicIPAddressType": "Dynamic",
+    "publicIPAddressType": "Static",
     "ubuntuOSVersion": "18.04-LTS",
     "vmName": "minecraftvm",
     "virtualNetworkName": "minecraftvnet",
