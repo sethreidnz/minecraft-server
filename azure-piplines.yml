@@ -98,6 +98,8 @@ stages:
       pool:
         vmImage: 'windows-latest'
       environment: 'production'
+      variables:
+        - group: MinecraftServer_Variables_Shared
       strategy:
         runOnce:
           deploy:
