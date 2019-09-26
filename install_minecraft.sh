@@ -23,10 +23,10 @@ if [ ! -d "$minecraft_server_path" ]; then
     addgroup --system $minecraft_group
 
     # download the server zip
-    wget -qO- -O tmp.zip $mod_server_uri && unzip tmp.zip && rm tmp.zip
+    wget -qO- -O tmp.zip "http://servers.technicpack.net/Technic/servers/hexxit/Hexxit_Server_v1.0.10.zip" && unzip tmp.zip && rm tmp.zip
 
     # set permissions on server folder
-    chown -R $minecraft_user $minecraft_server_path
+    chown -R minecraft /srv/minecraft_server
 
     # create a service to run minecraft
     touch /etc/systemd/system/minecraft-server.service
