@@ -6,18 +6,11 @@ trigger:
 pr: none
 
 variables:
-  AppServicePlan_Name: minecraft-tekkit
-  AzureSubscription: Microsoft Azure Sponsorship (15253eaa-8a37-4163-8903-aa688499a16f)
-  ResourceGroup_Location: 'Australia East'
-  ResourceGroup_Name: minecraft-tekkit
   WebApp_BuildConfiguration: Release
   WebApp_OutputFolder: $(Build.ArtifactStagingDirectory)/WebApp
   WebApp_ProjectDirectory: $(Build.SourcesDirectory)/src/$(WebApp_ProjectName)
   WebApp_ProjectFile: $(WebApp_ProjectDirectory)/$(WebApp_ProjectName).csproj
   WebApp_ProjectName: MinecraftServer.Web
-  WebApp_SiteName: minecraft-tekkit
-  VirtualMachine_Name: minecraft-tekkit
-  VirtualMachine_DnsName: minecraft-tekkit
 
 stages:
   # Download and build the project
@@ -80,7 +73,7 @@ stages:
               inputs:
                 azureSubscription: '$(AzureSubscription)'
                 resourceGroupName: $(ResourceGroup_Name)
-                location: $(ResourceGroup_Location)
+                location: '$(ResourceGroup_Location)'
                 csmFile: $(Pipeline.Workspace)/drop/azure-deploy.json
                 deploymentMode: 'Incremental'
                 overrideParameters: >-
