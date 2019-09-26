@@ -24,7 +24,6 @@ stages:
           - group: MinecraftServer_Variables_Shared
 
         steps:
-
           ## Run the dotnet build/publish
           - script: |
               dotnet publish $(WebApp_ProjectFile) --configuration $(WebApp_BuildConfiguration) --output $(WebApp_OutputFolder)
