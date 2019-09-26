@@ -6,6 +6,7 @@ trigger:
 pr: none
 
 variables:
+  AzureSubscription: Microsoft Azure Sponsorship (15253eaa-8a37-4163-8903-aa688499a16f)
   WebApp_BuildConfiguration: Release
   WebApp_OutputFolder: $(Build.ArtifactStagingDirectory)/WebApp
   WebApp_ProjectDirectory: $(Build.SourcesDirectory)/src/$(WebApp_ProjectName)
