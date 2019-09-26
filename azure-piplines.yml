@@ -20,8 +20,9 @@ stages:
       - job: run_build
         pool:
           vmImage: "windows-latest"
-      variables:
-        - group: MinecraftServer_Variables_Shared
+        variables:
+          - group: MinecraftServer_Variables_Shared
+
         steps:
 
           ## Run the dotnet build/publish
