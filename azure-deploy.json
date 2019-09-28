@@ -119,10 +119,10 @@
       }
     },
     {
-      "apiVersion": "2018-11-01",
-      "type": "Microsoft.Web/sites",
-      "kind": "app",
-      "name": "[parameters('appServiceName')]",
+      "name": "appsettings",
+      "comments": "Staging slot appsettings",
+      "type": "config",
+      "apiVersion": "2015-08-01",
       "location": "[resourceGroup().location]",
       "properties": {
         "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]"
