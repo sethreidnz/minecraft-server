@@ -19,16 +19,16 @@ namespace MinecraftServer.Web.Controllers
     [HttpPost]
     public async Task<IActionResult> Start()
     {
-      await _azureRestClient.StartVm();
-      return Ok();
+      var vmState = await _azureRestClient.StartVm();
+      return Ok(vmState);
     }
 
     [Route("stop")]
     [HttpPost]
     public async Task<IActionResult> Stop()
     {
-      await _azureRestClient.DealocateVm();
-      return Ok();
+      var vmState = await _azureRestClient.DealocateVm();
+      return Ok(vmState);
     }
 
     [Route("details")]
