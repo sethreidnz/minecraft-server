@@ -57,7 +57,7 @@
     },
     "azureManagementResourceUri": {
       "type": "string",
-      "default": "https://management.azure.com/"
+      "defaultValue": "https://management.azure.com/"
     },
     "azureSubscriptionId": {
       "type": "string"
