@@ -59,13 +59,13 @@ namespace MinecraftServer.Web.Clients
       }
     }
 
-    public async Task<bool> DealocateVm()
+    public async Task<VirtualMachineStateResponse> DealocateVm()
     {
       var bearerToken = await GetBearerToken();
-      var isDeallocated = await VmHasStatus("PowerState/deallocated");
+      var (isDeallocated, vmState) = await VmHasStatus("PowerState/deallocated");
       if (isDeallocated)
       {
-        return true;
+        return vmState;
       }
 
       using (var httpClient = new HttpClient())
@@ -73,14 +73,14 @@ namespace MinecraftServer.Web.Clients
         httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bearerToken.AccessToken);
         await httpClient.PostAsync(_dealocateVmEndpoint, null);
 
-        isDeallocated = await VmHasStatus("PowerState/deallocated");
+        (isDeallocated, vmState) = await VmHasStatus("PowerState/deallocated");
         while (!isDeallocated)
         {
           Thread.Sleep(5000);
-          isDeallocated = await VmHasStatus("PowerState/deallocated");
+          (isDeallocated, vmState) = await VmHasStatus("PowerState/deallocated");
         }
 
-        return true;
+        return vmState;
       }
     }
 
@@ -97,13 +97,13 @@ namespace MinecraftServer.Web.Clients
       }
     }
 
-    public async Task<bool> StartVm()
+    public async Task<VirtualMachineStateResponse> StartVm()
     {
       var bearerToken = await GetBearerToken();
-      var isRunning = await VmHasStatus("PowerState/running");
+      var (isRunning, vmState) = await VmHasStatus("PowerState/running");
       if (isRunning)
       {
-        return true;
+        return vmState;
       }
 
       using (var httpClient = new HttpClient())
@@ -111,21 +111,21 @@ namespace MinecraftServer.Web.Clients
         httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bearerToken.AccessToken);
         await httpClient.PostAsync(_startVmEndpoint, null);
 
-        isRunning = await VmHasStatus("PowerState/running");
+        (isRunning, vmState) = await VmHasStatus("PowerState/running");
         while (!isRunning)
         {
           Thread.Sleep(5000);
-          isRunning = await VmHasStatus("PowerState/running");
+          (isRunning, vmState) = await VmHasStatus("PowerState/running");
         }
 
-        return true;
+        return vmState;
       }
     }
 
-    public async Task<bool> VmHasStatus(string status)
+    public async Task<(bool, VirtualMachineStateResponse)> VmHasStatus(string status)
     {
       var vmStatus = await GetVmState();
-      return vmStatus.Statuses.Any(s => s.Code == status);
+      return (vmStatus.Statuses.Any(s => s.Code == status), vmStatus);
     }
   }
 }

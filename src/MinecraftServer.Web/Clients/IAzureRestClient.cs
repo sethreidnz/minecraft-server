@@ -5,9 +5,9 @@ namespace MinecraftServer.Web.Clients
 {
   public interface IAzureRestClient
   {
-    Task<bool> DealocateVm();
+    Task<VirtualMachineStateResponse> DealocateVm();
 
-    Task<bool> StartVm();
+    Task<VirtualMachineStateResponse> StartVm();
 
     Task<VirtualMachineStateResponse> GetVmState();
   }

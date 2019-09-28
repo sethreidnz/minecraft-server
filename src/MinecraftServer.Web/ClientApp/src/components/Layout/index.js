@@ -1,27 +1,15 @@
 // node_modules
 import React from "react";
-import { Link } from "react-router-dom";
+import Navbar from 'react-bootstrap/Navbar';
 
 // local imports
 import "./Layout.scss";
 
 export const Layout = ({ children }) => (
   <>
-    <header>
-      <nav>
-        <ul>
-          <li>
-            <Link to="/home">Home</Link>
-          </li>
-          <li>
-            <Link to="/sample-data">Sample data</Link>
-          </li>
-          <li>
-            <Link to="/sample-data-hooks">Sample data with hooks</Link>
-          </li>
-        </ul>
-      </nav>
-    </header>
+    <Navbar bg="light">
+      <Navbar.Brand href="#home">Minecraft server</Navbar.Brand>
+    </Navbar>
     <main>{children}</main>
     <footer />
   </>
