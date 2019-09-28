@@ -68,7 +68,7 @@ export class Home extends Component {
         <Table striped bordered hover variant="dark">
           <tbody>
             <tr>
-              <td>VM Status</td>
+              <td>Server status</td>
               <td>{this.displayVmStatus(vmState)}</td>
             </tr>
           </tbody>
