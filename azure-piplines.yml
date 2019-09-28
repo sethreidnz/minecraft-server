@@ -90,8 +90,8 @@ stages:
                   -azureTenantId "$(Azure_TenantId)"
                   -servicePrincipleAppId "$(ServicePrinciple_AppId)"
                   -servicePrincipleClientSecret "$(ServicePrinciple_ClientSecret)"
-                  -virtualMachineResourceGroupName "$(VirtualMachine_ResourceGroupName)"
-                  -virtualMachineName "$(VirtualMachineName)"
+                  -virtualMachineResourceGroupName "$(ResourceGroup_Name)"
+                  -virtualMachineName "$(VirtualMachine_Name)"
 
   # Deploy the resources and application
   - stage: Production
