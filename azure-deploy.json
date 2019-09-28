@@ -132,7 +132,7 @@
       ],
       "resources": [
         {
-          "name": "appsettings",
+          "name": "[concat(parameters('appServiceName'), '/appsettings')]",
           "type": "config",
           "apiVersion": "2018-11-01",
           "properties": {
