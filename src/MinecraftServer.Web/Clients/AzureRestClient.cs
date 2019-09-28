@@ -33,9 +33,9 @@ namespace MinecraftServer.Web.Clients
       _servicePrincipleOptions = servicePrincipleOptions?.Value;
       _virtualMachineOptions = virtualMachineOptions?.Value;
       _bearerTokenUri = new Uri($"https://login.microsoftonline.com/{_azureOptions.TenantId}/oauth2/token");
-      _dealocateVmEndpoint = new Uri(_azureOptions.ResourceUri, $"/subscriptions/{_azureOptions.SubscriptionId}/resourceGroups/{_virtualMachineOptions.ResourceGroupName}/providers/Microsoft.Compute/virtualMachines/{_virtualMachineOptions.VirtualMachineName}/deallocate?api-version=2019-03-01");
-      _startVmEndpoint = new Uri(_azureOptions.ResourceUri, $"/subscriptions/{_azureOptions.SubscriptionId}/resourceGroups/{_virtualMachineOptions.ResourceGroupName}/providers/Microsoft.Compute/virtualMachines/{_virtualMachineOptions.VirtualMachineName}/start?api-version=2019-03-01");
-      _vmStateEndpoint = new Uri(_azureOptions.ResourceUri, $"/subscriptions/{_azureOptions.SubscriptionId}/resourceGroups/{_virtualMachineOptions.ResourceGroupName}/providers/Microsoft.Compute/virtualMachines/{_virtualMachineOptions.VirtualMachineName}/instanceView?api-version=2019-03-01");
+      _dealocateVmEndpoint = new Uri(_azureOptions.ResourceUri, $"/subscriptions/{_azureOptions.SubscriptionId}/resourceGroups/{_virtualMachineOptions.ResourceGroupName}/providers/Microsoft.Compute/virtualMachines/{_virtualMachineOptions.Name}/deallocate?api-version=2019-03-01");
+      _startVmEndpoint = new Uri(_azureOptions.ResourceUri, $"/subscriptions/{_azureOptions.SubscriptionId}/resourceGroups/{_virtualMachineOptions.ResourceGroupName}/providers/Microsoft.Compute/virtualMachines/{_virtualMachineOptions.Name}/start?api-version=2019-03-01");
+      _vmStateEndpoint = new Uri(_azureOptions.ResourceUri, $"/subscriptions/{_azureOptions.SubscriptionId}/resourceGroups/{_virtualMachineOptions.ResourceGroupName}/providers/Microsoft.Compute/virtualMachines/{_virtualMachineOptions.Name}/instanceView?api-version=2019-03-01");
     }
 
     public async Task<BearerTokenResponse> GetBearerToken()

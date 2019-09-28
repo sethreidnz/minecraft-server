@@ -54,6 +54,28 @@
     },
     "appServiceName": {
       "type": "string"
+    },
+    "azureManagementResourceUri": {
+      "type": "string",
+      "default": "https://management.azure.com/"
+    },
+    "azureSubscriptionId": {
+      "type": "string"
+    },
+    "azureTenantId": {
+      "type": "string"
+    },
+    "servicePrincipleAppId": {
+      "type": "string"
+    },
+    "servicePrincipleClientSecret": {
+      "type": "string"
+    },
+    "virtualMachineResourceGroupName": {
+      "type": "string"
+    },
+    "virtualMachineName": {
+      "type": "string"
     }
   },
   "variables": {
@@ -107,6 +129,25 @@
       },
       "dependsOn": [
         "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]"
+      ],
+      "resources": [
+        {
+          "name": "appsettings",
+          "type": "Microsoft.Web/sites/config",
+          "apiVersion": "2018-11-01",
+          "properties": {
+            "Azure:ResourceUri": "[parameters('azureManagementResourceUri')]",
+            "Azure:SubscriptionId": "[parameters('azureSubscriptionId')]",
+            "Azure:TenantId": "[parameters('azureTenantId')]",
+            "ServicePrinciple:AppId": "[parameters('servicePrincipleAppId')]",
+            "ServicePrinciple:ClientSecret": "[parameters('servicePrincipleClientSecret')]",
+            "VirtualMachine:ResourceGroupName": "[parameters('virtualMachineResourceGroupName')]",
+            "VirtualMachine:Name": "[parameters('virtualMachineName')]"
+          },
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', parameters('appServiceName'))]"
+          ]
+        }
       ]
     },
     {
@@ -249,8 +290,7 @@
           ]
         }
       },
-      "resources": [
-      ]
+      "resources": []
     }
   ]
 }

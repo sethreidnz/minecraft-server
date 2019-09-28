@@ -4,6 +4,6 @@ namespace MinecraftServer.Web.Options
   {
     public string ResourceGroupName { get; set; }
 
-    public string VirtualMachineName { get; set; }
+    public string Name { get; set; }
   }
 }

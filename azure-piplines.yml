@@ -85,6 +85,12 @@ stages:
                   -appServiceName "$(WebApp_SiteName)"
                   -appServicePlanName "$(AppServicePlan_Name)"
                   -dnsNameForPublicIP "$(VirtualMachine_DnsName)"
+                  -azureSubscriptionId "$(Azure_SubscriptionId)"
+                  -azureTenantId "$(Azure_TenantId)"
+                  -servicePrincipleAppId "$(ServicePrinciple_AppId)"
+                  -servicePrincipleClientSecret "$(ServicePrinciple_ClientSecret)"
+                  -virtualMachineResourceGroupName "$(VirtualMachine_ResourceGroupName)"
+                  -virtualMachineName "$(VirtualMachineName)"
 
   # Deploy the resources and application
   - stage: Production
