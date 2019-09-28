@@ -83,6 +83,7 @@ stages:
                   -adminPasswordOrKey "$(Authentication_PublicKey)"
                   -adminUsername "$(Authentication_UserName)"
                   -appServiceName "$(WebApp_SiteName)"
+                  -appServicePlanResourceGroup "$(AppServicePlan_ResourceGroup)"
                   -appServicePlanName "$(AppServicePlan_Name)"
                   -dnsNameForPublicIP "$(VirtualMachine_DnsName)"
                   -azureSubscriptionId "$(Azure_SubscriptionId)"

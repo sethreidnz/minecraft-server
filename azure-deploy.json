@@ -45,12 +45,8 @@
     "appServicePlanName": {
       "type": "string"
     },
-    "appServicePlanSku": {
-      "type": "string",
-      "defaultValue": "S1",
-      "metadata": {
-        "description": "The SKU of App Service Plan, by default is Standard S1"
-      }
+    "appServicePlanResourceGroup": {
+      "type": "string"
     },
     "appServiceName": {
       "type": "string"
@@ -79,6 +75,7 @@
     }
   },
   "variables": {
+    "appServicePlan": "[resourceId(parameters('appServicePlanResourceGroup'), 'Microsoft.Web/serverfarms', parameters('appServicePlanName'))]",
     "lowerCaseDNSName": "[toLower(parameters('dnsNameForPublicIP'))]",
     "imagePublisher": "Canonical",
     "imageOffer": "UbuntuServer",
@@ -107,34 +104,27 @@
   },
   "resources": [
     {
-      "apiVersion": "2018-02-01",
-      "type": "Microsoft.Web/serverfarms",
+      "apiVersion": "2016-08-01",
+      "type": "Microsoft.Web/sites",
       "kind": "app",
-      "name": "[parameters('appServicePlanName')]",
-      "location": "[resourceGroup().location]",
-      "properties": {},
-      "dependsOn": [],
-      "sku": {
-        "name": "[parameters('appServicePlanSku')]"
-      }
-    },
-    {
-      "name": "appsettings",
-      "comments": "Staging slot appsettings",
-      "type": "config",
-      "apiVersion": "2015-08-01",
-      "location": "[resourceGroup().location]",
-      "properties": {
-        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]"
+      "name": "[parameters('appServiceName')]",
+      "location": "[parameters('location')]",
+      "comments": "This is the web app, also the default 'nameless' slot.",
+      "tags": {
+        "displayName": "WebApp"
       },
-      "dependsOn": [
-        "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]"
-      ],
+      "properties": {
+        "serverFarmId": "[variables('appServicePlan')]"
+      },
       "resources": [
         {
-          "name": "[concat(parameters('appServiceName'), '/appsettings')]",
+          "name": "appsettings",
+          "comments": "Staging slot appsettings",
           "type": "config",
-          "apiVersion": "2018-11-01",
+          "apiVersion": "2015-08-01",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', parameters('appServiceName'))]"
+          ],
           "properties": {
             "Azure:ResourceUri": "[parameters('azureManagementResourceUri')]",
             "Azure:SubscriptionId": "[parameters('azureSubscriptionId')]",
@@ -143,10 +133,7 @@
             "ServicePrinciple:ClientSecret": "[parameters('servicePrincipleClientSecret')]",
             "VirtualMachine:ResourceGroupName": "[parameters('virtualMachineResourceGroupName')]",
             "VirtualMachine:Name": "[parameters('virtualMachineName')]"
-          },
-          "dependsOn": [
-            "[resourceId('Microsoft.Web/sites', parameters('appServiceName'))]"
-          ]
+          }
         }
       ]
     },
