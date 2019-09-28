@@ -13,6 +13,7 @@
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
     <TreatSpecificWarningsAsErrors />
     <CodeAnalysisRuleSet>..\Rules.ruleset</CodeAnalysisRuleSet>
+    <UserSecretsId>56ffa9bc-2c33-4fc1-afcc-8d708abbc871</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

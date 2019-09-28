@@ -1,9 +1,21 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26124.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29215.179
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MinecraftServer.Web", "MinecraftServer.Web\MinecraftServer.Web.csproj", "{3B16323D-560E-435F-BA53-18CF3318701B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinecraftServer.Web", "MinecraftServer.Web\MinecraftServer.Web.csproj", "{3B16323D-560E-435F-BA53-18CF3318701B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{F8AFD68E-B9A4-4E67-874B-E92DAC2C2858}"
+	ProjectSection(SolutionItems) = preProject
+		..\.editorconfig = ..\.editorconfig
+		..\.gitattributes = ..\.gitattributes
+		..\.gitignore = ..\.gitignore
+		..\azure-deploy.json = ..\azure-deploy.json
+		..\azure-piplines.yml = ..\azure-piplines.yml
+		..\install_minecraft.sh = ..\install_minecraft.sh
+		..\README.md = ..\README.md
+		Rules.ruleset = Rules.ruleset
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,9 +25,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{3B16323D-560E-435F-BA53-18CF3318701B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -30,5 +39,11 @@ Global
 		{3B16323D-560E-435F-BA53-18CF3318701B}.Release|x64.Build.0 = Release|Any CPU
 		{3B16323D-560E-435F-BA53-18CF3318701B}.Release|x86.ActiveCfg = Release|Any CPU
 		{3B16323D-560E-435F-BA53-18CF3318701B}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2F779F64-74A4-4B79-9ED2-F975B6DB72B9}
 	EndGlobalSection
 EndGlobal

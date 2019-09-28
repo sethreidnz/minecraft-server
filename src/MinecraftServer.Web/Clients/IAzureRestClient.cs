@@ -1,11 +1,14 @@
+using System.Threading.Tasks;
+using MinecraftServer.Web.Models.Azure;
+
 namespace MinecraftServer.Web.Clients
 {
   public interface IAzureRestClient
   {
-    bool StartVm();
+    Task<bool> DealocateVm();
 
-    bool DealocateVm();
+    Task<bool> StartVm();
 
-    bool GetVmState();
+    Task<VirtualMachineStateResponse> GetVmState();
   }
 }

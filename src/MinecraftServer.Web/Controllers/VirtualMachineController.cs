@@ -17,23 +17,26 @@ namespace MinecraftServer.Web.Controllers
 
     [Route("start")]
     [HttpPost]
-    public Task<IActionResult> Start()
+    public async Task<IActionResult> Start()
     {
-      throw new NotImplementedException();
+      await _azureRestClient.StartVm();
+      return Ok();
     }
 
     [Route("stop")]
     [HttpPost]
-    public Task<IActionResult> Stop()
+    public async Task<IActionResult> Stop()
     {
-      throw new NotImplementedException();
+      await _azureRestClient.DealocateVm();
+      return Ok();
     }
 
     [Route("details")]
     [HttpGet]
-    public Task<IActionResult> Details()
+    public async Task<IActionResult> Details()
     {
-      throw new NotImplementedException();
+      var vmState = await _azureRestClient.GetVmState();
+      return Ok(vmState);
     }
   }
 }

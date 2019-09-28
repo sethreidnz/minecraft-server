@@ -1,5 +1,7 @@
 using Autofac;
+using Microsoft.Extensions.Options;
 using MinecraftServer.Web.Clients;
+using MinecraftServer.Web.Options;
 
 namespace MinecraftServer.Web.Autofac
 {
