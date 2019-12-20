@@ -9,7 +9,6 @@ export const startVm = async () => {
   const response = await fetch(`${endpoint}/start`, {
     method: 'POST'
   });
-  debugger;
   return await response.json();
 };
 
