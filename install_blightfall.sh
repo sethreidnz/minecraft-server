@@ -1,7 +1,7 @@
 #!/bin/bash
 
 minecraft_server_path=/srv/minecraft_blightfall
-minecraft_user=minecraft
+minecraft_user=minecraft-blightfall
 minecraft_group=minecraft
 memoryAllocs=6g
 memoryAllocx=8g
