@@ -2,7 +2,7 @@
 
 minecraft_server_path=/srv/minecraft_blightfall
 minecraft_user=minecraft-blightfall
-minecraft_group=minecraft
+minecraft_group=minecraft-blightfall
 memoryAllocs=6g
 memoryAllocx=8g
 server_jar=minecraft_server.1.12.2
