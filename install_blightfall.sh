@@ -1,7 +1,6 @@
 #!/bin/bash
 
 minecraft_server_path=/srv/minecraft_blightfall
-<<<<<<< HEAD
 minecraft_user=minecraft_blightfall
 minecraft_group=minecraft_blightfall
 minecraft_service_name=minecraft_blightfall
@@ -9,13 +8,6 @@ minecraft_service_file_path=/etc/systemd/system/minecraft_blightfall.service
 memoryAllocs=8g
 memoryAllocx=12g
 server_jar=minecraft_server.1.7.10.jar
-=======
-minecraft_user=minecraft-blightfall
-minecraft_group=minecraft-blightfall
-memoryAllocs=6g
-memoryAllocx=8g
-server_jar=minecraft_server.1.12.2
->>>>>>> c9c4ce095873835a79fdb8cd1d3b6c02c893ed02
 mod_server_uri="http://servers.technicpack.net/Technic/servers/blightfall/Blightfall_Server_v2.1.5.zip"
 
 if [ ! -d "$minecraft_server_path" ]; then
