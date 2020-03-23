@@ -1,11 +1,11 @@
 #!/bin/bash
 
 minecraft_server_path=/srv/minecraft_blightfall
-minecraft_user=minecraft
-minecraft_group=minecraft
-memoryAllocs=6g
-memoryAllocx=8g
-server_jar=minecraft_server.1.12.2
+minecraft_user=minecraft_blightfall
+minecraft_group=minecraft_blightfall
+memoryAllocs=8g
+memoryAllocx=12g
+server_jar=minecraft_server.1.7.10.jar
 mod_server_uri="http://servers.technicpack.net/Technic/servers/blightfall/Blightfall_Server_v2.1.5.zip"
 
 if [ ! -d "$minecraft_server_path" ]; then
@@ -23,10 +23,10 @@ if [ ! -d "$minecraft_server_path" ]; then
     addgroup --system $minecraft_group
 
     # download the server zip
-    wget -qO- -O tmp.zip "http://servers.technicpack.net/Technic/servers/blightfall/Blightfall_Server_v2.1.5.zip" && unzip tmp.zip && rm tmp.zip
+    wget -qO- -O tmp.zip $mod_server_uri && unzip tmp.zip && rm tmp.zip
 
     # set permissions on server folder
-    chown -R minecraft $minecraft_server_path
+    chown -R $minecraft_user $minecraft_server_path
 
     # create a service to run minecraft
     touch /etc/systemd/system/minecraft_blightfall.service
