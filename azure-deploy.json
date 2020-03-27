@@ -293,9 +293,9 @@
         "autoUpgradeMinorVersion": true,
         "settings": {
           "fileUris": [
-            "https://raw.githubusercontent.com/sethreidnz/minecraft-server/install-the-112-pack/install_the-1122-pack.sh"
+            "https://raw.githubusercontent.com/sethreidnz/minecraft-server/install-the-112-pack/install_blightfall.sh"
           ],
-          "commandToExecute": "bash install_the-1122-pack.sh"
+          "commandToExecute": "bash install_blightfall.sh"
         }
       }
     }
