@@ -5,6 +5,10 @@ This project was generated using the `create-dotnet-react-app` command line tool
 - In `src/MinecraftServer.Web`A ASP.NET Core MVC app created using [`dotnet new react`](https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-new?tabs=netcore21) that will serve up the frontend application and serve as an API.
 - In `src/MinecraftServer.Web/ClientApp` a React.js app that was generated using [`create-react-app`](https://github.com/facebook/create-react-app). For more information on usage of `create-react-app` see their [user guide](https://facebook.github.io/create-react-app/).
 
+You can deploy this to azure using the button below. Currently it will install the Blightfall mod.
+
+[![Deploy to Azure](https://azurecomcdn.azureedge.net/mediahandler/acomblog/media/Default/blog/deploybutton.png)](https://azuredeploy.net/)
+
 ## Getting started
 
 For frontend developers it recommended to use [Visual Studio Code](https://code.visualstudio.com/) and for backend developers [Visual Studio](https://visualstudio.microsoft.com/vs/).
